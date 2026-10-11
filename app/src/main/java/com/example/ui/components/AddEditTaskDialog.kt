@@ -1,12 +1,12 @@
 package com.example.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.scaleIn
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,15 +20,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Schedule
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,12 +35,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.data.model.RoutineTask
+import com.example.ui.theme.BrandGradient
+import com.example.ui.theme.Indigo500
+import com.example.ui.theme.Violet500
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -120,7 +122,7 @@ fun AddEditTaskDialog(
 
                     Spacer(modifier = Modifier.height(18.dp))
 
-                    // 1. Task Name
+                    // 1. Task Name Only
                     OutlinedTextField(
                         value = title,
                         onValueChange = {
@@ -142,7 +144,7 @@ fun AddEditTaskDialog(
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    // 2. Date with Quick Chips
+                    // 2. Date Only
                     OutlinedTextField(
                         value = date,
                         onValueChange = { date = it },
@@ -171,7 +173,7 @@ fun AddEditTaskDialog(
                                 text = "Today",
                                 style = MaterialTheme.typography.labelMedium,
                                 fontWeight = if (date == todayStr) FontWeight.Bold else FontWeight.Medium,
-                                color = if (date == todayStr) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                                color = if (date == todayStr) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.padding(vertical = 6.dp, horizontal = 4.dp),
                                 textAlign = androidx.compose.ui.text.style.TextAlign.Center
                             )
@@ -187,7 +189,7 @@ fun AddEditTaskDialog(
                                 text = "Tomorrow",
                                 style = MaterialTheme.typography.labelMedium,
                                 fontWeight = if (date == tomorrowStr) FontWeight.Bold else FontWeight.Medium,
-                                color = if (date == tomorrowStr) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                                color = if (date == tomorrowStr) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.padding(vertical = 6.dp, horizontal = 4.dp),
                                 textAlign = androidx.compose.ui.text.style.TextAlign.Center
                             )
@@ -196,7 +198,7 @@ fun AddEditTaskDialog(
 
                     Spacer(modifier = Modifier.height(14.dp))
 
-                    // 3. Time with Quick Presets
+                    // 3. Time Only
                     OutlinedTextField(
                         value = time,
                         onValueChange = { time = it },
@@ -227,7 +229,7 @@ fun AddEditTaskDialog(
                                     text = label,
                                     style = MaterialTheme.typography.labelSmall,
                                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                                    color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                                    color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
                                     modifier = Modifier.padding(vertical = 6.dp, horizontal = 2.dp),
                                     textAlign = androidx.compose.ui.text.style.TextAlign.Center
                                 )
@@ -251,21 +253,26 @@ fun AddEditTaskDialog(
 
                         Spacer(modifier = Modifier.width(10.dp))
 
-                        Button(
+                        Surface(
                             onClick = {
                                 if (title.isBlank()) {
                                     titleError = true
-                                    return@Button
+                                    return@Surface
                                 }
                                 onSave(title.trim(), date.trim(), time.trim())
                             },
                             shape = RoundedCornerShape(14.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                            modifier = Modifier.testTag("save_task_button")
+                            color = Color.Transparent,
+                            modifier = Modifier
+                                .shadow(6.dp, RoundedCornerShape(14.dp), ambientColor = Indigo500, spotColor = Violet500)
+                                .background(BrandGradient, RoundedCornerShape(14.dp))
+                                .testTag("save_task_button")
                         ) {
                             Text(
                                 text = if (initialTask == null) "Add Routine" else "Save Changes",
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White,
+                                modifier = Modifier.padding(horizontal = 18.dp, vertical = 12.dp)
                             )
                         }
                     }

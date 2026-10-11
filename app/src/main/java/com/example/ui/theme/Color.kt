@@ -1,49 +1,60 @@
 package com.example.ui.theme
 
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
-// Primary Electric Indigo & Accents
-val PrimaryIndigo = Color(0xFF4F46E5)
-val PrimaryIndigoHover = Color(0xFF4338CA)
-val PrimaryIndigoLight = Color(0xFF6366F1)
-val PrimaryIndigoContainer = Color(0xFFEEF2FF)
-val PrimaryIndigoContainerDark = Color(0xFF1E1B4B)
+// ==========================================
+// RESTORED PREVIOUS MODERN THEME:
+// INDIGO • VIOLET • EMERALD • SLATE
+// Premium, minimalist, sleek & soothing aesthetic
+// ==========================================
 
-// Accent Colors
-val AccentEmerald = Color(0xFF10B981)
-val AccentEmeraldContainer = Color(0xFFECFDF5)
-val AccentEmeraldContainerDark = Color(0xFF064E3B)
+// --- Primary Indigo & Violet Spectrum ---
+val Indigo600 = Color(0xFF4F46E5)              // Vibrant Indigo Primary
+val Indigo500 = Color(0xFF6366F1)              // Soft Indigo
+val Indigo400 = Color(0xFF818CF8)              // Electric Lavender Indigo
+val Indigo100 = Color(0xFFE0E7FF)              // Very light indigo tint
+val Indigo50 = Color(0xFFEEF2FF)               // Light indigo surface
+val Violet500 = Color(0xFF8B5CF6)              // Rich Violet Accent
+val Violet400 = Color(0xFFA78BFA)              // Light Violet
 
-val AccentAmber = Color(0xFFF59E0B)
-val AccentAmberContainer = Color(0xFFFEF3C7)
-val AccentAmberContainerDark = Color(0xFF451A03)
+// --- Accent Emerald & Teal Spectrum ---
+val Emerald500 = Color(0xFF10B981)             // Vibrant Emerald for completions
+val Emerald400 = Color(0xFF34D399)             // Mint Emerald
+val Emerald600 = Color(0xFF059669)             // Deep Emerald
+val Teal500 = Color(0xFF14B8A6)                // Calming Teal
 
-val AccentRose = Color(0xFFF43F5E)
-val AccentRoseContainer = Color(0xFFFFE4E6)
-val AccentRoseContainerDark = Color(0xFF4C0519)
+// --- Warm Amber Accent ---
+val Amber500 = Color(0xFFF59E0B)               // Warm Amber for warning / due
+val Amber400 = Color(0xFFFBBF24)               // Soft Amber
 
-val AccentSky = Color(0xFF0284C7)
-val AccentSkyContainer = Color(0xFFE0F2FE)
-val AccentSkyContainerDark = Color(0xFF082F49)
+// --- Signature Gradients ---
+val BrandGradient = Brush.horizontalGradient(
+    listOf(Indigo600, Violet500)
+)
 
-val AccentPurple = Color(0xFF8B5CF6)
-val AccentPurpleContainer = Color(0xFFF5F3FF)
-val AccentPurpleContainerDark = Color(0xFF2E1065)
+val EmeraldGradient = Brush.horizontalGradient(
+    listOf(Emerald400, Emerald600)
+)
 
-// Refined Neutral Palette (Dark mode - deep sleek obsidian & slate)
-val DarkBg = Color(0xFF0A0E17)
-val DarkSurface = Color(0xFF111726)
-val DarkCard = Color(0xFF182032)
-val DarkCardBorder = Color(0xFF253046)
-val DarkTextPrimary = Color(0xFFF8FAFC)
-val DarkTextSecondary = Color(0xFF94A3B8)
-val DarkTextMuted = Color(0xFF64748B)
+val AlertGradient = Brush.horizontalGradient(
+    listOf(Color(0xFFEF4444), Color(0xFFDC2626))
+)
 
-// Refined Neutral Palette (Light mode - ultra-clean white & subtle slate)
-val LightBg = Color(0xFFF8FAFC)
-val LightSurface = Color(0xFFFFFFFF)
-val LightCard = Color(0xFFFFFFFF)
-val LightCardBorder = Color(0xFFE2E8F0)
-val LightTextPrimary = Color(0xFF0F172A)
-val LightTextSecondary = Color(0xFF475569)
-val LightTextMuted = Color(0xFF94A3B8)
+// --- Midnight Slate Dark Mode (Linear / GitHub Dark style) ---
+val DarkBackground = Color(0xFF0B0F19)         // Deep midnight slate
+val DarkSurface = Color(0xFF111827)            // Dark slate surface
+val DarkCard = Color(0xFF1F2937)               // Elevated card background
+val DarkCardBorder = Color(0xFF374151)         // Subtle slate border
+val DarkTextPrimary = Color(0xFFF9FAFB)        // Crisp white text
+val DarkTextSecondary = Color(0xFF9CA3AF)      // Muted slate secondary text
+val DarkTextMuted = Color(0xFF6B7280)          // Tertiary subtle text
+
+// --- Crisp Clean Light Mode ---
+val LightBackground = Color(0xFFF8FAFC)        // Soft slate background
+val LightSurface = Color(0xFFFFFFFF)           // Pure white surface
+val LightCard = Color(0xFFFFFFFF)              // Pure white card
+val LightCardBorder = Color(0xFFE2E8F0)        // Clean subtle border
+val LightTextPrimary = Color(0xFF0F172A)       // Deep slate text
+val LightTextSecondary = Color(0xFF475569)     // Secondary slate text
+val LightTextMuted = Color(0xFF94A3B8)         // Muted placeholder text

@@ -41,7 +41,7 @@ object NotificationHelper {
             ).apply {
                 description = "Persistent routine alarms that require user completion or rescheduling"
                 enableLights(true)
-                lightColor = Color.MAGENTA
+                lightColor = Color.GREEN
                 enableVibration(true)
                 vibrationPattern = longArrayOf(0, 500, 200, 500, 200, 500)
                 setSound(defaultSoundUri, audioAttributes)

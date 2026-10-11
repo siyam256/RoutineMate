@@ -19,7 +19,7 @@
             </gradient>
         </aapt:attr>
     </path>
-    <!-- Subtle circular glow in background -->
+    <!-- Subtle circular indigo glow in background -->
     <path
         android:pathData="M54,54m-38,0a38,38 0 1,0 76,0a38,38 0 1,0 -76,0">
         <aapt:attr name="android:fillColor">
@@ -29,7 +29,7 @@
                 android:endX="54"
                 android:endY="92"
                 android:type="linear">
-                <item android:offset="0.0" android:color="#306366F1" />
+                <item android:offset="0.0" android:color="#406366F1" />
                 <item android:offset="1.0" android:color="#006366F1" />
             </gradient>
         </aapt:attr>

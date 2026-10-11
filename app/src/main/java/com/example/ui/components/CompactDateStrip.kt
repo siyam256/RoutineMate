@@ -1,6 +1,8 @@
 package com.example.ui.components
 
-import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -20,9 +22,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CalendarToday
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -33,11 +32,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.model.RoutineTask
+import com.example.ui.theme.BrandGradient
+import com.example.ui.theme.Indigo500
+import com.example.ui.theme.Violet500
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -67,7 +72,7 @@ fun CompactDateStrip(
         val dayOfWeekFormat = SimpleDateFormat("EEE", Locale.US)
         val dayNumFormat = SimpleDateFormat("d", Locale.US)
 
-        for (i in 0..17) {
+        for (i in 0..20) {
             val dateStr = dateFormat.format(cal.time)
             list.add(
                 CalendarDayItem(
@@ -100,10 +105,11 @@ fun CompactDateStrip(
             .fillMaxWidth()
             .padding(vertical = 4.dp)
     ) {
+        // Month & Quick Today Bar
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 6.dp),
+                .padding(horizontal = 18.dp, vertical = 6.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -118,12 +124,15 @@ fun CompactDateStrip(
                 }
             }
 
-            Text(
-                text = displayMonth,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = displayMonth,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    letterSpacing = (-0.2).sp
+                )
+            }
 
             if (selectedDate != todayDateStr) {
                 Surface(
@@ -136,13 +145,13 @@ fun CompactDateStrip(
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.CalendarToday,
-                            contentDescription = "Today",
-                            modifier = Modifier.size(13.dp),
-                            tint = MaterialTheme.colorScheme.primary
+                        Box(
+                            modifier = Modifier
+                                .size(6.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.primary)
                         )
-                        Spacer(modifier = Modifier.width(5.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = "Today",
                             style = MaterialTheme.typography.labelSmall,
@@ -156,6 +165,7 @@ fun CompactDateStrip(
 
         Spacer(modifier = Modifier.height(4.dp))
 
+        // Horizontal Day Pills
         LazyRow(
             state = listState,
             contentPadding = PaddingValues(horizontal = 16.dp),
@@ -166,36 +176,45 @@ fun CompactDateStrip(
                 val isSelected = item.dateStr == selectedDate
                 val taskCount = taskDateCounts[item.dateStr] ?: 0
 
-                val animatedBg by animateColorAsState(
-                    targetValue = when {
-                        isSelected -> MaterialTheme.colorScheme.primary
-                        item.isToday -> MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
-                        else -> MaterialTheme.colorScheme.surface
-                    },
-                    label = "bgColor"
+                val itemScale by animateFloatAsState(
+                    targetValue = if (isSelected) 1.04f else 1f,
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                        stiffness = Spring.StiffnessLow
+                    ),
+                    label = "itemScale"
                 )
 
                 val textColor = when {
-                    isSelected -> MaterialTheme.colorScheme.onPrimary
+                    isSelected -> Color.White
                     item.isToday -> MaterialTheme.colorScheme.primary
                     else -> MaterialTheme.colorScheme.onSurfaceVariant
                 }
 
                 Box(
                     modifier = Modifier
-                        .width(50.dp)
-                        .clip(RoundedCornerShape(16.dp))
-                        .background(animatedBg)
-                        .border(
-                            width = 1.dp,
-                            color = if (isSelected) MaterialTheme.colorScheme.primary
-                            else if (item.isToday) MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
-                            else MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
-                            shape = RoundedCornerShape(16.dp)
+                        .scale(itemScale)
+                        .width(52.dp)
+                        .height(72.dp)
+                        .clip(RoundedCornerShape(18.dp))
+                        .then(
+                            if (isSelected) {
+                                Modifier
+                                    .shadow(8.dp, RoundedCornerShape(18.dp), ambientColor = Indigo500, spotColor = Violet500)
+                                    .background(BrandGradient)
+                            } else {
+                                Modifier
+                                    .background(MaterialTheme.colorScheme.surface)
+                                    .border(
+                                        width = 1.dp,
+                                        color = if (item.isToday) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                                        else MaterialTheme.colorScheme.outline.copy(alpha = 0.45f),
+                                        shape = RoundedCornerShape(18.dp)
+                                    )
+                            }
                         )
                         .clickable { onSelectDate(item.dateStr) }
-                        .padding(vertical = 10.dp, horizontal = 2.dp)
-                        .testTag("date_chip_${item.dateStr}"),
+                        .padding(vertical = 8.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Column(
@@ -203,33 +222,38 @@ fun CompactDateStrip(
                         verticalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = if (item.isToday) "Today" else item.dayOfWeek,
-                            fontSize = 11.sp,
-                            fontWeight = if (item.isToday || isSelected) FontWeight.Bold else FontWeight.Medium,
-                            color = textColor
+                            text = if (item.isToday) "TODAY" else item.dayOfWeek.uppercase(),
+                            fontSize = 9.sp,
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = 0.5.sp,
+                            color = if (isSelected) Color.White.copy(alpha = 0.85f) else textColor
                         )
+
                         Spacer(modifier = Modifier.height(4.dp))
+
                         Text(
                             text = item.dayNumber,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
+                            fontSize = 17.sp,
+                            fontWeight = FontWeight.ExtraBold,
                             color = textColor
                         )
 
-                        Spacer(modifier = Modifier.height(6.dp))
-                        // Task presence dots
+                        Spacer(modifier = Modifier.height(5.dp))
+
+                        // Task indicator dots
                         if (taskCount > 0) {
                             Box(
                                 modifier = Modifier
-                                    .size(5.dp)
-                                    .clip(CircleShape)
+                                    .width(if (taskCount > 1) 12.dp else 5.dp)
+                                    .height(3.dp)
+                                    .clip(RoundedCornerShape(2.dp))
                                     .background(
-                                        if (isSelected) MaterialTheme.colorScheme.onPrimary
-                                        else MaterialTheme.colorScheme.primary
+                                        if (isSelected) Color.White
+                                        else MaterialTheme.colorScheme.secondary
                                     )
                             )
                         } else {
-                            Spacer(modifier = Modifier.size(5.dp))
+                            Spacer(modifier = Modifier.height(3.dp))
                         }
                     }
                 }

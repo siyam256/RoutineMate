@@ -16,6 +16,8 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
@@ -53,6 +55,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -73,6 +76,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -86,6 +91,11 @@ import com.example.ui.components.CompactDateStrip
 import com.example.ui.components.RoutineTaskCard
 import com.example.ui.components.SettingsView
 import com.example.ui.components.TaskDueActionDialog
+import com.example.ui.theme.AlertGradient
+import com.example.ui.theme.BrandGradient
+import com.example.ui.theme.Indigo500
+import com.example.ui.theme.Violet500
+import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -126,29 +136,40 @@ fun HomeScreen(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Box(
                             modifier = Modifier
-                                .size(34.dp)
-                                .clip(RoundedCornerShape(10.dp))
-                                .background(MaterialTheme.colorScheme.primary),
+                                .size(36.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(BrandGradient),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 imageVector = Icons.Default.CalendarMonth,
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onPrimary,
+                                tint = Color.White,
                                 modifier = Modifier.size(20.dp)
                             )
                         }
                         Spacer(modifier = Modifier.width(10.dp))
                         Column {
-                            Text(
-                                text = "RoutineMate",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(
+                                    text = "RoutineMate",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    letterSpacing = (-0.3).sp,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Box(
+                                    modifier = Modifier
+                                        .size(6.dp)
+                                        .clip(CircleShape)
+                                        .background(MaterialTheme.colorScheme.primary)
+                                )
+                            }
                             Text(
                                 text = "Minimalist Routine Planner",
                                 style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Medium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
@@ -174,11 +195,11 @@ fun HomeScreen(
                                 ThemeMode.SYSTEM -> Icons.Default.DarkMode
                             },
                             contentDescription = "Toggle Theme",
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
 
-                    // Settings shortcut
+                    // Settings shortcut button
                     IconButton(
                         onClick = { selectedTab = 2 },
                         modifier = Modifier.testTag("settings_top_button")
@@ -199,28 +220,32 @@ fun HomeScreen(
         bottomBar = {
             NavigationBar(
                 containerColor = MaterialTheme.colorScheme.surface,
-                tonalElevation = 4.dp,
-                modifier = Modifier.border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.25f), RoundedCornerShape(0.dp))
+                tonalElevation = 6.dp,
+                modifier = Modifier.border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f),
+                    shape = RoundedCornerShape(0.dp)
+                )
             ) {
                 NavigationBarItem(
                     selected = selectedTab == 0,
                     onClick = { selectedTab = 0 },
                     icon = { Icon(Icons.Default.Today, contentDescription = "Routines") },
-                    label = { Text("Routines") },
+                    label = { Text("Routines", fontWeight = if (selectedTab == 0) FontWeight.Bold else FontWeight.Normal) },
                     modifier = Modifier.testTag("nav_routine_tab")
                 )
                 NavigationBarItem(
                     selected = selectedTab == 1,
                     onClick = { selectedTab = 1 },
                     icon = { Icon(Icons.Default.AutoAwesome, contentDescription = "AI Planner") },
-                    label = { Text("AI Planner") },
+                    label = { Text("AI Planner", fontWeight = if (selectedTab == 1) FontWeight.Bold else FontWeight.Normal) },
                     modifier = Modifier.testTag("nav_ai_tab")
                 )
                 NavigationBarItem(
                     selected = selectedTab == 2,
                     onClick = { selectedTab = 2 },
                     icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
-                    label = { Text("Settings") },
+                    label = { Text("Settings", fontWeight = if (selectedTab == 2) FontWeight.Bold else FontWeight.Normal) },
                     modifier = Modifier.testTag("nav_settings_tab")
                 )
             }
@@ -228,18 +253,28 @@ fun HomeScreen(
         floatingActionButton = {
             AnimatedVisibility(
                 visible = selectedTab == 0,
-                enter = fadeIn() + androidx.compose.animation.scaleIn(spring(Spring.DampingRatioMediumBouncy)),
-                exit = fadeOut() + androidx.compose.animation.scaleOut()
+                enter = fadeIn() + scaleIn(spring(Spring.DampingRatioMediumBouncy)),
+                exit = fadeOut() + scaleOut()
             ) {
                 FloatingActionButton(
                     onClick = { showAddTaskDialog = true },
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                    shape = RoundedCornerShape(18.dp),
-                    elevation = androidx.compose.material3.FloatingActionButtonDefaults.elevation(6.dp),
-                    modifier = Modifier.testTag("fab_add_task")
+                    containerColor = Color.Transparent,
+                    contentColor = Color.White,
+                    shape = RoundedCornerShape(20.dp),
+                    elevation = androidx.compose.material3.FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
+                    modifier = Modifier
+                        .shadow(10.dp, RoundedCornerShape(20.dp), ambientColor = Indigo500, spotColor = Violet500)
+                        .background(BrandGradient, RoundedCornerShape(20.dp))
+                        .testTag("fab_add_task")
                 ) {
-                    Icon(imageVector = Icons.Default.Add, contentDescription = "Add Routine")
+                    Row(
+                        modifier = Modifier.padding(horizontal = 18.dp, vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(imageVector = Icons.Default.Add, contentDescription = "New Routine", tint = Color.White)
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(text = "New Routine", fontWeight = FontWeight.Bold, color = Color.White, fontSize = 14.sp)
+                    }
                 }
             }
         }
@@ -249,25 +284,25 @@ fun HomeScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            // Butter-smooth AnimatedContent transition between tabs
+            // Butter-smooth Tab Transition
             AnimatedContent(
                 targetState = selectedTab,
                 transitionSpec = {
                     val isForward = targetState > initialState
                     (slideInHorizontally(
-                        initialOffsetX = { if (isForward) it / 4 else -it / 4 },
-                        animationSpec = tween(220, easing = FastOutSlowInEasing)
-                    ) + fadeIn(animationSpec = tween(220))) togetherWith
+                        initialOffsetX = { if (isForward) it / 3 else -it / 3 },
+                        animationSpec = tween(240, easing = FastOutSlowInEasing)
+                    ) + fadeIn(animationSpec = tween(240))) togetherWith
                     (slideOutHorizontally(
-                        targetOffsetX = { if (isForward) -it / 4 else it / 4 },
-                        animationSpec = tween(220, easing = FastOutSlowInEasing)
-                    ) + fadeOut(animationSpec = tween(220)))
+                        targetOffsetX = { if (isForward) -it / 3 else it / 3 },
+                        animationSpec = tween(240, easing = FastOutSlowInEasing)
+                    ) + fadeOut(animationSpec = tween(240)))
                 },
                 label = "tabTransition"
             ) { targetTab ->
                 when (targetTab) {
                     0 -> {
-                        // Routines Timeline
+                        // Routines Timeline Content
                         RoutineTimelineContent(
                             selectedDate = selectedDate,
                             todayDateStr = viewModel.todayDateStr,
@@ -293,7 +328,7 @@ fun HomeScreen(
                     }
 
                     1 -> {
-                        // AI Planner Screen
+                        // AI Planner Chat Screen
                         AiChatView(
                             messages = chatMessages,
                             isLoading = isAiLoading,
@@ -333,7 +368,7 @@ fun HomeScreen(
                 )
             }
 
-            // Add new routine dialog (Title, Date, Time only)
+            // Add new routine dialog (Task Name, Date, Time strictly)
             if (showAddTaskDialog) {
                 AddEditTaskDialog(
                     initialDate = selectedDate,
@@ -345,7 +380,7 @@ fun HomeScreen(
                 )
             }
 
-            // Edit existing routine dialog (Title, Date, Time only)
+            // Edit existing routine dialog
             if (taskToEdit != null) {
                 AddEditTaskDialog(
                     initialDate = taskToEdit!!.date,
@@ -382,24 +417,131 @@ private fun RoutineTimelineContent(
     onOpenAiChat: () -> Unit,
     onOpenAddTask: () -> Unit
 ) {
-    // Gentle pulse animation for due alert banner
+    var filterMode by remember { mutableIntStateOf(0) } // 0: All, 1: Pending, 2: Completed
+
+    // Dynamic pulse for due alert banner
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
     val pulseScale by infiniteTransition.animateFloat(
         initialValue = 1f,
-        targetValue = 1.02f,
+        targetValue = 1.025f,
         animationSpec = infiniteRepeatable(
-            animation = tween(800, easing = FastOutSlowInEasing),
+            animation = tween(750, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
         ),
         label = "pulseScale"
     )
+
+    // Dynamic greeting calculation
+    val greeting = remember {
+        val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+        when (hour) {
+            in 5..11 -> "Good morning"
+            in 12..16 -> "Good afternoon"
+            else -> "Good evening"
+        }
+    }
+
+    val totalCount = tasksForDate.size
+    val completedCount = tasksForDate.count { it.isCompleted }
+    val pendingCount = totalCount - completedCount
+    val progressFraction = if (totalCount > 0) completedCount.toFloat() / totalCount.toFloat() else 0f
+
+    val displayedTasks = remember(tasksForDate, filterMode) {
+        when (filterMode) {
+            1 -> tasksForDate.filter { !it.isCompleted }
+            2 -> tasksForDate.filter { it.isCompleted }
+            else -> tasksForDate
+        }
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        // Date Strip Row
+        // Hero Greeting & Micro Progress Banner
+        Card(
+            shape = RoundedCornerShape(22.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.4f), RoundedCornerShape(22.dp))
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column {
+                        Text(
+                            text = greeting,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            letterSpacing = (-0.3).sp
+                        )
+                        Text(
+                            text = if (totalCount == 0) "No routines planned for today"
+                            else "$completedCount of $totalCount completed (${(progressFraction * 100).toInt()}%)",
+                            style = MaterialTheme.typography.bodySmall,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+
+                    // Plan with AI button
+                    Surface(
+                        onClick = onOpenAiChat,
+                        shape = RoundedCornerShape(12.dp),
+                        color = Color.Transparent,
+                        modifier = Modifier
+                            .shadow(6.dp, RoundedCornerShape(12.dp), ambientColor = Indigo500, spotColor = Violet500)
+                            .background(BrandGradient, RoundedCornerShape(12.dp))
+                            .testTag("quick_ai_scheduler_chip")
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.AutoAwesome,
+                                contentDescription = null,
+                                modifier = Modifier.size(14.dp),
+                                tint = Color.White
+                            )
+                            Spacer(modifier = Modifier.width(5.dp))
+                            Text(
+                                text = "Ask AI",
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                        }
+                    }
+                }
+
+                if (totalCount > 0) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    LinearProgressIndicator(
+                        progress = { progressFraction },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(6.dp)
+                            .clip(RoundedCornerShape(3.dp)),
+                        color = MaterialTheme.colorScheme.primary,
+                        trackColor = MaterialTheme.colorScheme.surfaceVariant
+                    )
+                }
+            }
+        }
+
+        // Calendar Strip
         CompactDateStrip(
             selectedDate = selectedDate,
             todayDateStr = todayDateStr,
@@ -407,54 +549,54 @@ private fun RoutineTimelineContent(
             onSelectDate = onSelectDate
         )
 
-        // Persistent Triggered Alert Banner with smooth pulse
+        // Persistent Triggered Alert Banner with pulsing gradient
         if (triggeredTasks.isNotEmpty()) {
             val dueTask = triggeredTasks.first()
             Card(
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.errorContainer
-                ),
+                shape = RoundedCornerShape(18.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer),
                 modifier = Modifier
                     .fillMaxWidth()
                     .scale(pulseScale)
                     .padding(horizontal = 16.dp, vertical = 6.dp)
                     .clickable { onTriggerClick(dueTask) }
+                    .border(1.5.dp, MaterialTheme.colorScheme.error, RoundedCornerShape(18.dp))
                     .testTag("due_task_alert_banner")
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(12.dp),
+                        .padding(14.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(36.dp)
+                            .size(38.dp)
                             .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.error),
+                            .background(AlertGradient),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Default.NotificationsActive,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onError,
+                            tint = Color.White,
                             modifier = Modifier.size(20.dp)
                         )
                     }
 
-                    Spacer(modifier = Modifier.width(10.dp))
+                    Spacer(modifier = Modifier.width(12.dp))
 
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
                             text = "🔔 ROUTINE DUE: ${dueTask.title}",
                             style = MaterialTheme.typography.titleSmall,
-                            fontWeight = FontWeight.Bold,
+                            fontWeight = FontWeight.ExtraBold,
                             color = MaterialTheme.colorScheme.onErrorContainer
                         )
                         Text(
                             text = "Tap to mark Completed or Reschedule",
                             style = MaterialTheme.typography.bodySmall,
+                            fontWeight = FontWeight.Medium,
                             color = MaterialTheme.colorScheme.onErrorContainer
                         )
                     }
@@ -462,55 +604,69 @@ private fun RoutineTimelineContent(
             }
         }
 
-        // Summary row
-        val completedCount = tasksForDate.count { it.isCompleted }
-        val totalCount = tasksForDate.size
-
+        // Routine Filter Chips: All, Pending, Completed
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 6.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = if (totalCount == 0) "Daily Schedule"
-                else "$totalCount routines • $completedCount completed",
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-
-            // AI shortcut chip
-            Surface(
-                onClick = onOpenAiChat,
-                shape = RoundedCornerShape(10.dp),
-                color = MaterialTheme.colorScheme.primaryContainer,
-                modifier = Modifier.testTag("quick_ai_scheduler_chip")
-            ) {
-                Row(
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically
+            listOf(
+                Triple(0, "All", totalCount),
+                Triple(1, "Pending", pendingCount),
+                Triple(2, "Done", completedCount)
+            ).forEach { (idx, label, count) ->
+                val isSelected = filterMode == idx
+                Surface(
+                    onClick = { filterMode = idx },
+                    shape = RoundedCornerShape(10.dp),
+                    color = if (isSelected) MaterialTheme.colorScheme.primaryContainer
+                    else MaterialTheme.colorScheme.surface,
+                    modifier = Modifier
+                        .border(
+                            1.dp,
+                            if (isSelected) MaterialTheme.colorScheme.primary
+                            else MaterialTheme.colorScheme.outline.copy(alpha = 0.4f),
+                            RoundedCornerShape(10.dp)
+                        )
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.AutoAwesome,
-                        contentDescription = null,
-                        modifier = Modifier.size(13.dp),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = "Plan with AI",
-                        style = MaterialTheme.typography.labelSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
+                    Row(
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = label,
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                            color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer
+                            else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(6.dp))
+                                .background(
+                                    if (isSelected) MaterialTheme.colorScheme.primary
+                                    else MaterialTheme.colorScheme.surfaceVariant
+                                )
+                                .padding(horizontal = 5.dp, vertical = 1.dp)
+                        ) {
+                            Text(
+                                text = "$count",
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = if (isSelected) MaterialTheme.colorScheme.onPrimary
+                                else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
                 }
             }
         }
 
-        // Timeline tasks list
-        if (tasksForDate.isEmpty()) {
+        // Timeline items
+        if (displayedTasks.isEmpty()) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -523,23 +679,23 @@ private fun RoutineTimelineContent(
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(72.dp)
+                            .size(76.dp)
                             .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.surfaceVariant),
+                            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f)),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Default.CalendarMonth,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(36.dp)
+                            modifier = Modifier.size(38.dp)
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(18.dp))
 
                     Text(
-                        text = "No routines scheduled",
+                        text = if (totalCount == 0) "All clear for this date" else "No routines in this filter",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
@@ -548,36 +704,40 @@ private fun RoutineTimelineContent(
                     Spacer(modifier = Modifier.height(6.dp))
 
                     Text(
-                        text = "Tap (+) below or ask AI Planner to automatically schedule routines in your open slots.",
+                        text = if (totalCount == 0) "No routines scheduled. Tap below or ask the AI Planner to instantly book open slots."
+                        else "Check other tabs or create a new routine.",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center
                     )
 
-                    Spacer(modifier = Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.height(22.dp))
 
                     Surface(
                         onClick = onOpenAddTask,
-                        shape = RoundedCornerShape(12.dp),
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.testTag("empty_state_add_button")
+                        shape = RoundedCornerShape(16.dp),
+                        color = Color.Transparent,
+                        modifier = Modifier
+                            .shadow(8.dp, RoundedCornerShape(16.dp), ambientColor = Indigo500, spotColor = Violet500)
+                            .background(BrandGradient, RoundedCornerShape(16.dp))
+                            .testTag("empty_state_add_button")
                     ) {
                         Row(
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
+                            modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Add,
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onPrimary,
+                                tint = Color.White,
                                 modifier = Modifier.size(18.dp)
                             )
-                            Spacer(modifier = Modifier.width(6.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "New Routine",
+                                text = "Create Routine",
                                 style = MaterialTheme.typography.labelLarge,
                                 fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onPrimary
+                                color = Color.White
                             )
                         }
                     }
@@ -585,11 +745,11 @@ private fun RoutineTimelineContent(
             }
         } else {
             LazyColumn(
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 80.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
                 modifier = Modifier.fillMaxSize()
             ) {
-                items(tasksForDate, key = { it.id }) { task ->
+                items(displayedTasks, key = { it.id }) { task ->
                     RoutineTaskCard(
                         task = task,
                         onToggleComplete = { onToggleComplete(task) },

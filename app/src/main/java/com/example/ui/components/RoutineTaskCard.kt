@@ -8,7 +8,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -45,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
@@ -53,6 +53,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.model.RoutineTask
+import com.example.ui.theme.Emerald400
+import com.example.ui.theme.Emerald500
+import com.example.ui.theme.EmeraldGradient
 
 @Composable
 fun RoutineTaskCard(
@@ -68,9 +71,9 @@ fun RoutineTaskCard(
     val isCompleted = task.isCompleted
     val isTriggered = task.isTriggered && !isCompleted
 
-    // Butter-smooth spring bouncy animation on completion toggle
+    // Butter-smooth spring scale for checkbox interaction
     val checkmarkScale by animateFloatAsState(
-        targetValue = if (isCompleted) 1f else 0.8f,
+        targetValue = if (isCompleted) 1.05f else 0.9f,
         animationSpec = spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
             stiffness = Spring.StiffnessMediumLow
@@ -78,28 +81,28 @@ fun RoutineTaskCard(
         label = "checkScale"
     )
 
-    // Butter-smooth color transition
+    // Smooth background animation
     val cardBg by animateColorAsState(
         targetValue = when {
-            isTriggered -> MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f)
-            isCompleted -> MaterialTheme.colorScheme.surface.copy(alpha = 0.6f)
+            isTriggered -> MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.4f)
+            isCompleted -> MaterialTheme.colorScheme.surface.copy(alpha = 0.55f)
             else -> MaterialTheme.colorScheme.surface
         },
-        animationSpec = tween(250),
+        animationSpec = tween(220),
         label = "cardBg"
     )
 
     Card(
-        shape = RoundedCornerShape(18.dp),
+        shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = cardBg),
         elevation = CardDefaults.cardElevation(defaultElevation = if (isTriggered) 4.dp else 0.dp),
         modifier = modifier
             .fillMaxWidth()
             .border(
-                width = 1.dp,
+                width = if (isTriggered) 1.5.dp else 1.dp,
                 color = if (isTriggered) MaterialTheme.colorScheme.error
                 else MaterialTheme.colorScheme.outline.copy(alpha = 0.45f),
-                shape = RoundedCornerShape(18.dp)
+                shape = RoundedCornerShape(20.dp)
             )
             .testTag("task_card_${task.id}")
             .clickable {
@@ -112,20 +115,26 @@ fun RoutineTaskCard(
                 .padding(horizontal = 16.dp, vertical = 14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Checkmark button with bouncy spring scale
+            // Glowing Emerald Checkbox
             Box(
                 modifier = Modifier
                     .size(34.dp)
                     .scale(checkmarkScale)
                     .clip(CircleShape)
-                    .background(
-                        if (isCompleted) MaterialTheme.colorScheme.secondary
-                        else MaterialTheme.colorScheme.surfaceVariant
-                    )
-                    .border(
-                        width = if (isCompleted) 0.dp else 1.5.dp,
-                        color = if (isCompleted) Color.Transparent else MaterialTheme.colorScheme.outline,
-                        shape = CircleShape
+                    .then(
+                        if (isCompleted) {
+                            Modifier
+                                .shadow(6.dp, CircleShape, ambientColor = Emerald500, spotColor = Emerald400)
+                                .background(EmeraldGradient)
+                        } else {
+                            Modifier
+                                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f))
+                                .border(
+                                    width = 1.5.dp,
+                                    color = MaterialTheme.colorScheme.outline,
+                                    shape = CircleShape
+                                )
+                        }
                     )
                     .clickable { onToggleComplete() }
                     .testTag("checkbox_${task.id}"),
@@ -143,7 +152,7 @@ fun RoutineTaskCard(
 
             Spacer(modifier = Modifier.width(14.dp))
 
-            // Task content: Title & Time only
+            // Task content: Title & Time
             Column(
                 modifier = Modifier.weight(1f)
             ) {
@@ -153,8 +162,8 @@ fun RoutineTaskCard(
                     Text(
                         text = task.title,
                         style = MaterialTheme.typography.titleMedium,
-                        fontWeight = if (isCompleted) FontWeight.Normal else FontWeight.SemiBold,
-                        color = if (isCompleted) MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                        fontWeight = if (isCompleted) FontWeight.Normal else FontWeight.Bold,
+                        color = if (isCompleted) MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.45f)
                         else MaterialTheme.colorScheme.onSurface,
                         textDecoration = if (isCompleted) TextDecoration.LineThrough else TextDecoration.None,
                         maxLines = 1,
@@ -177,77 +186,98 @@ fun RoutineTaskCard(
                                     imageVector = Icons.Default.NotificationsActive,
                                     contentDescription = "Due",
                                     tint = MaterialTheme.colorScheme.onError,
-                                    modifier = Modifier.size(12.dp)
+                                    modifier = Modifier.size(11.dp)
                                 )
                                 Spacer(modifier = Modifier.width(3.dp))
                                 Text(
                                     text = "DUE NOW",
                                     fontSize = 10.sp,
                                     color = MaterialTheme.colorScheme.onError,
-                                    fontWeight = FontWeight.Bold
+                                    fontWeight = FontWeight.ExtraBold
                                 )
                             }
                         }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(3.dp))
+                Spacer(modifier = Modifier.height(4.dp))
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Schedule,
-                        contentDescription = null,
-                        modifier = Modifier.size(13.dp),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = task.time,
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
+                    // Time pill
+                    Surface(
+                        shape = RoundedCornerShape(8.dp),
+                        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Schedule,
+                                contentDescription = null,
+                                modifier = Modifier.size(12.dp),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = task.time,
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
 
                     if (task.snoozeCount > 0) {
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "• Snoozed ${task.snoozeCount}x",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.tertiary
-                        )
+                        Surface(
+                            shape = RoundedCornerShape(8.dp),
+                            color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.7f)
+                        ) {
+                            Text(
+                                text = "⏳ Snoozed ${task.snoozeCount}x",
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                            )
+                        }
                     }
                 }
             }
 
-            // Options menu
+            // Options menu button
             Box {
                 IconButton(
                     onClick = { menuExpanded = true },
-                    modifier = Modifier.size(36.dp)
+                    modifier = Modifier.size(34.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.MoreVert,
                         contentDescription = "Options",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                        modifier = Modifier.size(18.dp)
                     )
                 }
 
                 DropdownMenu(
                     expanded = menuExpanded,
-                    onDismissRequest = { menuExpanded = false }
+                    onDismissRequest = { menuExpanded = false },
+                    shape = RoundedCornerShape(16.dp),
+                    containerColor = MaterialTheme.colorScheme.surface
                 ) {
                     DropdownMenuItem(
-                        text = { Text("Edit") },
-                        leadingIcon = { Icon(Icons.Default.Edit, contentDescription = null) },
+                        text = { Text("Edit Routine") },
+                        leadingIcon = { Icon(Icons.Default.Edit, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
                         onClick = {
                             menuExpanded = false
                             onEdit()
                         }
                     )
                     DropdownMenuItem(
-                        text = { Text("Delete") },
+                        text = { Text("Delete Routine", color = MaterialTheme.colorScheme.error) },
                         leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null, tint = MaterialTheme.colorScheme.error) },
                         onClick = {
                             menuExpanded = false
