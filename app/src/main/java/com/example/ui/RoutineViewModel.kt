@@ -296,10 +296,46 @@ class RoutineViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
+    fun setGeminiApiKey(key: String) {
+        saveApiKey(key)
+    }
+
     fun setThemeMode(mode: ThemeMode) {
         viewModelScope.launch {
             repository.saveThemeMode(mode)
         }
+    }
+
+    fun toggleTaskCompleted(task: RoutineTask) {
+        if (task.isCompleted) {
+            updateTask(task.copy(isCompleted = false))
+        } else {
+            markTaskCompleted(task.id)
+        }
+    }
+
+    fun acknowledgeTriggeredTask(task: RoutineTask) {
+        openDueTaskDialog(task.id)
+    }
+
+    fun sendChatMessage(text: String) {
+        sendMessageToAi(text)
+    }
+
+    fun confirmProposedTask(messageId: String, action: ProposedRoutineAction) {
+        confirmAiProposedTask(messageId, action)
+    }
+
+    fun markDueTaskCompleted(task: RoutineTask) {
+        markTaskCompleted(task.id)
+    }
+
+    fun rescheduleDueTask(task: RoutineTask, newDate: String, newTime: String) {
+        snoozeTask(task.id, newDate, newTime)
+    }
+
+    fun dismissActiveDueTask() {
+        dismissDueDialogManually()
     }
 
     fun clearAiError() {

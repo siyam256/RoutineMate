@@ -8,47 +8,52 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import com.example.data.preferences.ThemeMode
 
+// ==========================================
+// WHATSAPP SOLID GREEN THEME
+// Clean, Solid, High-Performance, Compact
+// ==========================================
+
 private val DarkColorScheme = darkColorScheme(
-    primary = Indigo400,
-    onPrimary = Color.White,
-    primaryContainer = Color(0xFF312E81), // Deep indigo container
-    onPrimaryContainer = Indigo100,
-    secondary = Emerald400,
-    onSecondary = Color(0xFF022C22),
-    secondaryContainer = Color(0xFF064E3B),
-    onSecondaryContainer = Color(0xFFA7F3D0),
-    tertiary = Violet400,
+    primary = WhatsAppGreenPrimary,
+    onPrimary = Color(0xFF111B21),
+    primaryContainer = WhatsAppGreenContainerDark,
+    onPrimaryContainer = WhatsAppGreenLight,
+    secondary = WhatsAppGreenBright,
+    onSecondary = Color(0xFF0B141A),
+    secondaryContainer = Color(0xFF1F2C34),
+    onSecondaryContainer = WhatsAppGreenBright,
+    tertiary = WhatsAppGreenPrimary,
     onTertiary = Color.White,
-    background = DarkBackground,
-    onBackground = DarkTextPrimary,
-    surface = DarkSurface,
-    onSurface = DarkTextPrimary,
-    surfaceVariant = DarkCard,
-    onSurfaceVariant = DarkTextSecondary,
-    outline = DarkCardBorder,
-    error = Color(0xFFF87171),
+    background = WhatsAppDarkBackground,
+    onBackground = WhatsAppDarkTextPrimary,
+    surface = WhatsAppDarkSurface,
+    onSurface = WhatsAppDarkTextPrimary,
+    surfaceVariant = WhatsAppDarkCard,
+    onSurfaceVariant = WhatsAppDarkTextSecondary,
+    outline = WhatsAppDarkBorder,
+    error = WhatsAppRed,
     onError = Color.White
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Indigo600,
+    primary = WhatsAppGreenDark,
     onPrimary = Color.White,
-    primaryContainer = Indigo50,
-    onPrimaryContainer = Color(0xFF312E81),
-    secondary = Emerald500,
+    primaryContainer = WhatsAppGreenLight,
+    onPrimaryContainer = WhatsAppGreenDeep,
+    secondary = WhatsAppGreenPrimary,
     onSecondary = Color.White,
-    secondaryContainer = Color(0xFFD1FAE5),
-    onSecondaryContainer = Color(0xFF065F46),
-    tertiary = Violet500,
+    secondaryContainer = Color(0xFFE7FCE9),
+    onSecondaryContainer = WhatsAppGreenDark,
+    tertiary = WhatsAppGreenPrimary,
     onTertiary = Color.White,
-    background = LightBackground,
-    onBackground = LightTextPrimary,
-    surface = LightSurface,
-    onSurface = LightTextPrimary,
-    surfaceVariant = Color(0xFFF1F5F9),
-    onSurfaceVariant = LightTextSecondary,
-    outline = LightCardBorder,
-    error = Color(0xFFEF4444),
+    background = WhatsAppLightBackground,
+    onBackground = WhatsAppLightTextPrimary,
+    surface = WhatsAppLightSurface,
+    onSurface = WhatsAppLightTextPrimary,
+    surfaceVariant = WhatsAppLightCard,
+    onSurfaceVariant = WhatsAppLightTextSecondary,
+    outline = WhatsAppLightBorder,
+    error = WhatsAppRed,
     onError = Color.White
 )
 

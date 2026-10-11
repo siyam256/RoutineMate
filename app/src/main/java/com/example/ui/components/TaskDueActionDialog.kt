@@ -27,6 +27,8 @@ import androidx.compose.material.icons.filled.Alarm
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Snooze
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -44,7 +46,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
@@ -54,13 +55,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.data.model.RoutineTask
-import com.example.ui.theme.AlertGradient
-import com.example.ui.theme.BrandGradient
-import com.example.ui.theme.Emerald400
-import com.example.ui.theme.Emerald500
-import com.example.ui.theme.EmeraldGradient
-import com.example.ui.theme.Indigo500
-import com.example.ui.theme.Violet500
+import com.example.ui.theme.WhatsAppGreenPrimary
+import com.example.ui.theme.WhatsAppRed
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -81,7 +77,7 @@ fun TaskDueActionDialog(
     val infiniteTransition = rememberInfiniteTransition(label = "alarmPulse")
     val bellScale by infiniteTransition.animateFloat(
         initialValue = 1f,
-        targetValue = 1.1f,
+        targetValue = 1.08f,
         animationSpec = infiniteRepeatable(
             animation = tween(600, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
@@ -97,52 +93,52 @@ fun TaskDueActionDialog(
         )
     ) {
         Card(
-            shape = RoundedCornerShape(26.dp),
+            shape = RoundedCornerShape(18.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            elevation = CardDefaults.cardElevation(defaultElevation = 12.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(4.dp)
-                .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f), RoundedCornerShape(26.dp))
+                .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f), RoundedCornerShape(18.dp))
                 .testTag("task_due_action_dialog")
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(24.dp),
+                    .padding(20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Pulsing Alert Badge
+                // Solid Alert Badge
                 Box(
                     modifier = Modifier
-                        .size(62.dp)
+                        .size(52.dp)
                         .scale(bellScale)
                         .clip(CircleShape)
-                        .shadow(10.dp, CircleShape, ambientColor = Color(0xFFEF4444), spotColor = Color(0xFFDC2626))
-                        .background(AlertGradient),
+                        .background(WhatsAppRed),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Default.Alarm,
                         contentDescription = "Routine Alarm",
                         tint = Color.White,
-                        modifier = Modifier.size(30.dp)
+                        modifier = Modifier.size(26.dp)
                     )
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
                 Surface(
-                    shape = RoundedCornerShape(8.dp),
+                    shape = RoundedCornerShape(6.dp),
                     color = MaterialTheme.colorScheme.error.copy(alpha = 0.12f)
                 ) {
                     Text(
                         text = "ROUTINE DUE NOW",
                         style = MaterialTheme.typography.labelSmall,
-                        fontWeight = FontWeight.ExtraBold,
+                        fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.error,
-                        letterSpacing = 1.2.sp,
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 3.dp)
+                        letterSpacing = 1.sp,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
+                        fontSize = 11.sp
                     )
                 }
 
@@ -150,106 +146,103 @@ fun TaskDueActionDialog(
 
                 Text(
                     text = task.title,
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.ExtraBold,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    fontSize = 18.sp
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(6.dp))
 
                 Surface(
-                    shape = RoundedCornerShape(10.dp),
+                    shape = RoundedCornerShape(8.dp),
                     color = MaterialTheme.colorScheme.surfaceVariant
                 ) {
                     Row(
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp),
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
                             imageVector = Icons.Default.Schedule,
                             contentDescription = null,
-                            modifier = Modifier.size(14.dp),
-                            tint = MaterialTheme.colorScheme.primary
+                            modifier = Modifier.size(13.dp),
+                            tint = WhatsAppGreenPrimary
                         )
-                        Spacer(modifier = Modifier.width(5.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             text = "${task.date}  •  ${task.time}",
                             style = MaterialTheme.typography.labelMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontSize = 12.sp
                         )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(14.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
                     text = "Did you complete this routine task, or would you like to reschedule?",
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
-                    lineHeight = 20.sp
+                    fontSize = 12.sp
                 )
 
-                Spacer(modifier = Modifier.height(22.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 if (!showSnoozeOptions) {
-                    // Action 1: Mark Completed with Emerald Gradient
-                    Surface(
+                    // Action 1: Mark Completed with Solid WhatsApp Green (Compact button)
+                    Button(
                         onClick = onMarkDone,
-                        shape = RoundedCornerShape(16.dp),
-                        color = Color.Transparent,
+                        shape = RoundedCornerShape(10.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = WhatsAppGreenPrimary,
+                            contentColor = Color.White
+                        ),
+                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(52.dp)
-                            .shadow(8.dp, RoundedCornerShape(16.dp), ambientColor = Emerald500, spotColor = Emerald400)
-                            .background(EmeraldGradient, RoundedCornerShape(16.dp))
+                            .height(42.dp)
                             .testTag("action_done_button")
                     ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.CheckCircle,
-                                contentDescription = null,
-                                tint = Color.White,
-                                modifier = Modifier.size(20.dp)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = "Mark as Completed",
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                        }
+                        Icon(
+                            imageVector = Icons.Default.CheckCircle,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Mark as Completed",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
                     }
 
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
-                    // Action 2: Reschedule / Later
+                    // Action 2: Reschedule / Later (Compact outlined button)
                     OutlinedButton(
                         onClick = { showSnoozeOptions = true },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(50.dp)
+                            .height(40.dp)
                             .testTag("action_snooze_button"),
-                        shape = RoundedCornerShape(16.dp)
+                        shape = RoundedCornerShape(10.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Snooze,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(20.dp)
+                            tint = WhatsAppGreenPrimary,
+                            modifier = Modifier.size(18.dp)
                         )
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = "Reschedule / Later",
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Medium,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                     }
@@ -257,100 +250,105 @@ fun TaskDueActionDialog(
                     // Reschedule selection
                     Text(
                         text = "Choose when to remind you:",
-                        style = MaterialTheme.typography.labelLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontSize = 13.sp
                     )
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     FlowRow(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        AwardSnoozeChip(label = "+15m") {
+                        WhatsAppSnoozeChip(label = "+15m") {
                             val (d, t) = calculateQuickOffset(15)
                             onReschedule(d, t)
                         }
-                        AwardSnoozeChip(label = "+30m") {
+                        WhatsAppSnoozeChip(label = "+30m") {
                             val (d, t) = calculateQuickOffset(30)
                             onReschedule(d, t)
                         }
-                        AwardSnoozeChip(label = "+1h") {
+                        WhatsAppSnoozeChip(label = "+1h") {
                             val (d, t) = calculateQuickOffset(60)
                             onReschedule(d, t)
                         }
-                        AwardSnoozeChip(label = "Tonight (8 PM)") {
+                        WhatsAppSnoozeChip(label = "Tonight (8 PM)") {
                             val (d, _) = calculateQuickOffset(0)
                             onReschedule(d, "20:00")
                         }
-                        AwardSnoozeChip(label = "Tomorrow (9 AM)") {
+                        WhatsAppSnoozeChip(label = "Tomorrow (9 AM)") {
                             val cal = Calendar.getInstance()
                             cal.add(Calendar.DAY_OF_YEAR, 1)
                             val d = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(cal.time)
                             onReschedule(d, "09:00")
                         }
-                        AwardSnoozeChip(label = "Custom...") {
+                        WhatsAppSnoozeChip(label = "Custom...") {
                             showCustomInput = !showCustomInput
                         }
                     }
 
                     if (showCustomInput) {
-                        Spacer(modifier = Modifier.height(12.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
                             OutlinedTextField(
                                 value = customDateInput,
                                 onValueChange = { customDateInput = it },
-                                label = { Text("Date (YYYY-MM-DD)") },
+                                label = { Text("Date (YYYY-MM-DD)", fontSize = 11.sp) },
                                 singleLine = true,
-                                shape = RoundedCornerShape(12.dp),
+                                shape = RoundedCornerShape(8.dp),
                                 modifier = Modifier.weight(1.3f)
                             )
                             OutlinedTextField(
                                 value = customTimeInput,
                                 onValueChange = { customTimeInput = it },
-                                label = { Text("Time (HH:mm)") },
+                                label = { Text("Time (HH:mm)", fontSize = 11.sp) },
                                 singleLine = true,
-                                shape = RoundedCornerShape(12.dp),
+                                shape = RoundedCornerShape(8.dp),
                                 modifier = Modifier.weight(1f)
                             )
                         }
                         Spacer(modifier = Modifier.height(8.dp))
-                        Surface(
+                        Button(
                             onClick = {
                                 if (customDateInput.isNotBlank() && customTimeInput.isNotBlank()) {
                                     onReschedule(customDateInput.trim(), customTimeInput.trim())
                                 }
                             },
-                            shape = RoundedCornerShape(12.dp),
-                            color = Color.Transparent,
+                            shape = RoundedCornerShape(10.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = WhatsAppGreenPrimary,
+                                contentColor = Color.White
+                            ),
+                            elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .shadow(6.dp, RoundedCornerShape(12.dp), ambientColor = Indigo500, spotColor = Violet500)
-                                .background(BrandGradient, RoundedCornerShape(12.dp))
+                                .height(40.dp)
                         ) {
                             Text(
                                 text = "Confirm New Time",
                                 color = Color.White,
-                                fontWeight = FontWeight.Bold,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.padding(vertical = 12.dp)
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 13.sp
                             )
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(14.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
 
                     OutlinedButton(
                         onClick = { showSnoozeOptions = false },
-                        shape = RoundedCornerShape(14.dp),
-                        modifier = Modifier.fillMaxWidth()
+                        shape = RoundedCornerShape(10.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(38.dp)
                     ) {
-                        Text("Back")
+                        Text("Back", fontSize = 13.sp)
                     }
                 }
             }
@@ -359,22 +357,22 @@ fun TaskDueActionDialog(
 }
 
 @Composable
-private fun AwardSnoozeChip(
+private fun WhatsAppSnoozeChip(
     label: String,
     onClick: () -> Unit
 ) {
     Surface(
         onClick = onClick,
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(8.dp),
         color = MaterialTheme.colorScheme.primaryContainer,
         modifier = Modifier.testTag("snooze_chip_$label")
     ) {
         Text(
             text = label,
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Bold,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
-            modifier = Modifier.padding(horizontal = 14.dp, vertical = 9.dp)
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
         )
     }
 }
