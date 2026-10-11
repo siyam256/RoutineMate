@@ -1,0 +1,6 @@
+{
+  "name": "RoutineMate",
+  "description": "Minimalist smart routine manager with AI task scheduling, calendar timeline, persistent task reminders, and reschedule controls.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

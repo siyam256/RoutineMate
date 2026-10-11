@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Calendar Body Outline / Rounded Card (safe zone centered) -->
+    <path
+        android:fillColor="#E0E7FF"
+        android:pathData="M34,26 h40 c4.4,0 8,3.6 8,8 v40 c0,4.4 -3.6,8 -8,8 h-40 c-4.4,0 -8,-3.6 -8,-8 v-40 c0,-4.4 3.6,-8 8,-8 z" />
+    <!-- Calendar Top Header Accent (Indigo 600) -->
+    <path
+        android:fillColor="#4F46E5"
+        android:pathData="M34,26 h40 c4.4,0 8,3.6 8,8 v10 h-56 v-10 c0,-4.4 3.6,-8 8,-8 z" />
+    <!-- Calendar binder rings -->
+    <path
+        android:fillColor="#C7D2FE"
+        android:pathData="M38,22 h4 v8 h-4 z M66,22 h4 v8 h-4 z" />
+    <!-- Center Clock Circle on Calendar -->
+    <path
+        android:fillColor="#4F46E5"
+        android:pathData="M54,58 m-15,0 a15,15 0 1,0 30,0 a15,15 0 1,0 -30,0" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,58 m-12,0 a12,12 0 1,0 24,0 a12,12 0 1,0 -24,0" />
+    <!-- Clock Hands (Time indicator) -->
+    <path
+        android:fillColor="#312E81"
+        android:pathData="M53,50 h2 v9 h6 v2 h-8 z" />
+    <!-- AI Sparkle / Star top right of the calendar -->
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M75,26 C75,29 78,32 81,32 C78,32 75,35 75,38 C75,35 72,32 69,32 C72,32 75,29 75,26 Z" />
+    <path
+        android:fillColor="#FBBF24"
+        android:pathData="M81,41 C81,42.5 82.5,44 84,44 C82.5,44 81,45.5 81,47 C81,45.5 79.5,44 78,44 C79.5,44 81,42.5 81,41 Z" />
+</vector>
