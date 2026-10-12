@@ -6,11 +6,8 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.scaleIn
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -29,7 +26,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -42,14 +38,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.data.model.RoutineTask
-import com.example.ui.theme.WhatsAppGreenPrimary
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -60,7 +54,7 @@ fun AddEditTaskDialog(
     initialDate: String,
     initialTask: RoutineTask? = null,
     onDismiss: () -> Unit,
-    onSave: (title: String, date: String, time: String) -> Unit
+    onSave: (title: String, description: String, date: String, time: String) -> Unit
 ) {
     val currentTime = remember {
         val sdf = SimpleDateFormat("HH:mm", Locale.US)
@@ -68,6 +62,7 @@ fun AddEditTaskDialog(
     }
 
     var title by remember { mutableStateOf(initialTask?.title ?: "") }
+    var description by remember { mutableStateOf(initialTask?.description ?: "") }
     var date by remember { mutableStateOf(initialTask?.date ?: initialDate) }
     var time by remember { mutableStateOf(initialTask?.time ?: currentTime) }
     var titleError by remember { mutableStateOf(false) }
@@ -87,21 +82,21 @@ fun AddEditTaskDialog(
     Dialog(onDismissRequest = onDismiss) {
         AnimatedVisibility(
             visible = isVisible,
-            enter = fadeIn(animationSpec = tween(200)) + scaleIn(
-                initialScale = 0.94f,
+            enter = fadeIn(animationSpec = tween(180)) + scaleIn(
+                initialScale = 0.95f,
                 animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow)
             )
         ) {
             Card(
                 shape = RoundedCornerShape(18.dp),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(4.dp)
                     .border(
                         1.dp,
-                        MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                        MaterialTheme.colorScheme.outline.copy(alpha = 0.6f),
                         RoundedCornerShape(18.dp)
                     )
                     .testTag("add_edit_task_dialog")
@@ -116,10 +111,10 @@ fun AddEditTaskDialog(
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = 18.sp
+                        fontSize = 17.sp
                     )
                     Text(
-                        text = "Task name, date, and time only",
+                        text = "Set routine details, date, and time",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 12.sp
@@ -127,18 +122,18 @@ fun AddEditTaskDialog(
 
                     Spacer(modifier = Modifier.height(14.dp))
 
-                    // 1. Task Name Only
+                    // 1. Task Name
                     OutlinedTextField(
                         value = title,
                         onValueChange = {
                             title = it
                             if (it.isNotBlank()) titleError = false
                         },
-                        label = { Text("Task Name", fontSize = 13.sp) },
-                        placeholder = { Text("e.g. Exercise, Reading, Meeting", fontSize = 13.sp) },
+                        label = { Text("Routine Name", fontSize = 13.sp) },
+                        placeholder = { Text("e.g. Morning Cardio, Study Session", fontSize = 13.sp) },
                         isError = titleError,
                         supportingText = if (titleError) {
-                            { Text("Task name is required", fontSize = 11.sp) }
+                            { Text("Routine name is required", fontSize = 11.sp) }
                         } else null,
                         singleLine = true,
                         shape = RoundedCornerShape(10.dp),
@@ -149,12 +144,32 @@ fun AddEditTaskDialog(
 
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    // 2. Date Only
+                    // 2. Description (Optional)
+                    OutlinedTextField(
+                        value = description,
+                        onValueChange = { description = it },
+                        label = { Text("Notes / Details (Optional)", fontSize = 13.sp) },
+                        placeholder = { Text("e.g. 30 min cardio & core workout", fontSize = 13.sp) },
+                        maxLines = 2,
+                        shape = RoundedCornerShape(10.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    // 3. Date
                     OutlinedTextField(
                         value = date,
                         onValueChange = { date = it },
                         label = { Text("Date (YYYY-MM-DD)", fontSize = 13.sp) },
-                        leadingIcon = { Icon(Icons.Default.CalendarToday, contentDescription = null, tint = WhatsAppGreenPrimary, modifier = Modifier.size(18.dp)) },
+                        leadingIcon = {
+                            Icon(
+                                Icons.Default.CalendarToday,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        },
                         singleLine = true,
                         shape = RoundedCornerShape(10.dp),
                         modifier = Modifier
@@ -171,14 +186,23 @@ fun AddEditTaskDialog(
                         Surface(
                             onClick = { date = todayStr },
                             shape = RoundedCornerShape(8.dp),
-                            color = if (date == todayStr) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
-                            modifier = Modifier.weight(1f)
+                            color = if (date == todayStr) MaterialTheme.colorScheme.primary
+                            else MaterialTheme.colorScheme.surfaceVariant,
+                            modifier = Modifier
+                                .weight(1f)
+                                .border(
+                                    1.dp,
+                                    if (date == todayStr) MaterialTheme.colorScheme.primary
+                                    else MaterialTheme.colorScheme.outline.copy(alpha = 0.4f),
+                                    RoundedCornerShape(8.dp)
+                                )
                         ) {
                             Text(
                                 text = "Today",
                                 fontSize = 12.sp,
                                 fontWeight = if (date == todayStr) FontWeight.Bold else FontWeight.Medium,
-                                color = if (date == todayStr) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
+                                color = if (date == todayStr) MaterialTheme.colorScheme.onPrimary
+                                else MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.padding(vertical = 6.dp, horizontal = 4.dp),
                                 textAlign = androidx.compose.ui.text.style.TextAlign.Center
                             )
@@ -187,28 +211,44 @@ fun AddEditTaskDialog(
                         Surface(
                             onClick = { date = tomorrowStr },
                             shape = RoundedCornerShape(8.dp),
-                            color = if (date == tomorrowStr) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
-                            modifier = Modifier.weight(1f)
+                            color = if (date == tomorrowStr) MaterialTheme.colorScheme.primary
+                            else MaterialTheme.colorScheme.surfaceVariant,
+                            modifier = Modifier
+                                .weight(1f)
+                                .border(
+                                    1.dp,
+                                    if (date == tomorrowStr) MaterialTheme.colorScheme.primary
+                                    else MaterialTheme.colorScheme.outline.copy(alpha = 0.4f),
+                                    RoundedCornerShape(8.dp)
+                                )
                         ) {
                             Text(
                                 text = "Tomorrow",
                                 fontSize = 12.sp,
                                 fontWeight = if (date == tomorrowStr) FontWeight.Bold else FontWeight.Medium,
-                                color = if (date == tomorrowStr) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
+                                color = if (date == tomorrowStr) MaterialTheme.colorScheme.onPrimary
+                                else MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.padding(vertical = 6.dp, horizontal = 4.dp),
                                 textAlign = androidx.compose.ui.text.style.TextAlign.Center
                             )
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
 
-                    // 3. Time Only
+                    // 4. Time
                     OutlinedTextField(
                         value = time,
                         onValueChange = { time = it },
                         label = { Text("Time (HH:mm)", fontSize = 13.sp) },
-                        leadingIcon = { Icon(Icons.Default.Schedule, contentDescription = null, tint = WhatsAppGreenPrimary, modifier = Modifier.size(18.dp)) },
+                        leadingIcon = {
+                            Icon(
+                                Icons.Default.Schedule,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        },
                         singleLine = true,
                         shape = RoundedCornerShape(10.dp),
                         modifier = Modifier
@@ -222,19 +262,28 @@ fun AddEditTaskDialog(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        listOf("09:00" to "9 AM", "13:00" to "1 PM", "17:00" to "5 PM", "21:00" to "9 PM").forEach { (presetTime, label) ->
+                        listOf("07:00" to "7 AM", "09:00" to "9 AM", "13:00" to "1 PM", "20:00" to "8 PM").forEach { (presetTime, label) ->
                             val isSelected = time == presetTime
                             Surface(
                                 onClick = { time = presetTime },
                                 shape = RoundedCornerShape(8.dp),
-                                color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
-                                modifier = Modifier.weight(1f)
+                                color = if (isSelected) MaterialTheme.colorScheme.primary
+                                else MaterialTheme.colorScheme.surfaceVariant,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .border(
+                                        1.dp,
+                                        if (isSelected) MaterialTheme.colorScheme.primary
+                                        else MaterialTheme.colorScheme.outline.copy(alpha = 0.4f),
+                                        RoundedCornerShape(8.dp)
+                                    )
                             ) {
                                 Text(
                                     text = label,
                                     fontSize = 11.sp,
                                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                                    color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
+                                    color = if (isSelected) MaterialTheme.colorScheme.onPrimary
+                                    else MaterialTheme.colorScheme.onSurfaceVariant,
                                     modifier = Modifier.padding(vertical = 5.dp, horizontal = 2.dp),
                                     textAlign = androidx.compose.ui.text.style.TextAlign.Center
                                 )
@@ -244,7 +293,7 @@ fun AddEditTaskDialog(
 
                     Spacer(modifier = Modifier.height(18.dp))
 
-                    // WhatsApp Sleek, Compact Action Buttons (Solid colors, not chunky)
+                    // Compact Monochrome Action Buttons
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End,
@@ -253,7 +302,7 @@ fun AddEditTaskDialog(
                         TextButton(
                             onClick = onDismiss,
                             shape = RoundedCornerShape(8.dp),
-                            modifier = Modifier.height(38.dp)
+                            modifier = Modifier.height(36.dp)
                         ) {
                             Text(
                                 "Cancel",
@@ -268,19 +317,19 @@ fun AddEditTaskDialog(
                         Button(
                             onClick = {
                                 if (title.isBlank()) {
-                                    titleError = true
-                                    return@Button
-                                }
-                                onSave(title.trim(), date.trim(), time.trim())
+                                titleError = true
+                                return@Button
+                            }
+                                onSave(title.trim(), description.trim(), date.trim(), time.trim())
                             },
-                            shape = RoundedCornerShape(10.dp),
+                            shape = RoundedCornerShape(14.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = WhatsAppGreenPrimary,
-                                contentColor = Color.White
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = MaterialTheme.colorScheme.onPrimary
                             ),
                             elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp),
                             modifier = Modifier
-                                .height(38.dp)
+                                .height(36.dp)
                                 .testTag("save_task_button")
                         ) {
                             Text(

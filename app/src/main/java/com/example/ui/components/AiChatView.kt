@@ -55,8 +55,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.ai.ProposedRoutineAction
 import com.example.ui.ChatMessage
-import com.example.ui.theme.WhatsAppGreenLight
-import com.example.ui.theme.WhatsAppGreenPrimary
 
 @Composable
 fun AiChatView(
@@ -97,7 +95,7 @@ fun AiChatView(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             items(messages, key = { it.id }) { msg ->
-                WhatsAppChatBubbleItem(
+                MonoChatBubbleItem(
                     message = msg,
                     onConfirmAction = { action -> onConfirmProposedTask(msg.id, action) },
                     onQuickChange = { changePrompt -> onSendMessage(changePrompt) }
@@ -114,13 +112,13 @@ fun AiChatView(
                             modifier = Modifier
                                 .size(24.dp)
                                 .clip(CircleShape)
-                                .background(WhatsAppGreenPrimary),
+                                .background(MaterialTheme.colorScheme.primary),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 imageVector = Icons.Default.AutoAwesome,
                                 contentDescription = null,
-                                tint = Color.White,
+                                tint = MaterialTheme.colorScheme.onPrimary,
                                 modifier = Modifier.size(13.dp)
                             )
                         }
@@ -136,7 +134,7 @@ fun AiChatView(
                                 CircularProgressIndicator(
                                     modifier = Modifier.size(14.dp),
                                     strokeWidth = 2.dp,
-                                    color = WhatsAppGreenPrimary
+                                    color = MaterialTheme.colorScheme.primary
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
@@ -167,7 +165,7 @@ fun AiChatView(
                     color = MaterialTheme.colorScheme.surface,
                     modifier = Modifier.border(
                         1.dp,
-                        MaterialTheme.colorScheme.outline.copy(alpha = 0.4f),
+                        MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
                         RoundedCornerShape(14.dp)
                     )
                 ) {
@@ -179,7 +177,7 @@ fun AiChatView(
                             imageVector = Icons.Default.AutoAwesome,
                             contentDescription = null,
                             modifier = Modifier.size(11.dp),
-                            tint = WhatsAppGreenPrimary
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
@@ -194,11 +192,11 @@ fun AiChatView(
 
         // Input bar
         Surface(
-            tonalElevation = 1.dp,
+            tonalElevation = 0.dp,
             color = MaterialTheme.colorScheme.surface,
             modifier = Modifier
                 .fillMaxWidth()
-                .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.25f), RoundedCornerShape(0.dp))
+                .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.35f), RoundedCornerShape(0.dp))
         ) {
             Row(
                 modifier = Modifier
@@ -213,7 +211,7 @@ fun AiChatView(
                     modifier = Modifier
                         .weight(1f)
                         .testTag("ai_chat_input"),
-                    shape = RoundedCornerShape(20.dp),
+                    shape = RoundedCornerShape(18.dp),
                     maxLines = 3
                 )
 
@@ -229,10 +227,10 @@ fun AiChatView(
                     },
                     enabled = inputText.isNotBlank() && !isLoading,
                     modifier = Modifier
-                        .size(42.dp)
+                        .size(38.dp)
                         .clip(CircleShape)
                         .background(
-                            if (inputText.isNotBlank() && !isLoading) WhatsAppGreenPrimary
+                            if (inputText.isNotBlank() && !isLoading) MaterialTheme.colorScheme.primary
                             else MaterialTheme.colorScheme.surfaceVariant
                         )
                         .testTag("ai_send_button")
@@ -240,9 +238,9 @@ fun AiChatView(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.Send,
                         contentDescription = "Send",
-                        tint = if (inputText.isNotBlank() && !isLoading) Color.White
+                        tint = if (inputText.isNotBlank() && !isLoading) MaterialTheme.colorScheme.onPrimary
                         else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(16.dp)
                     )
                 }
             }
@@ -251,7 +249,7 @@ fun AiChatView(
 }
 
 @Composable
-private fun WhatsAppChatBubbleItem(
+private fun MonoChatBubbleItem(
     message: ChatMessage,
     onConfirmAction: (ProposedRoutineAction) -> Unit,
     onQuickChange: (String) -> Unit
@@ -272,13 +270,13 @@ private fun WhatsAppChatBubbleItem(
                     modifier = Modifier
                         .size(24.dp)
                         .clip(CircleShape)
-                        .background(WhatsAppGreenPrimary),
+                        .background(MaterialTheme.colorScheme.primary),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Default.AutoAwesome,
                         contentDescription = "AI",
-                        tint = Color.White,
+                        tint = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.size(13.dp)
                     )
                 }
@@ -292,7 +290,7 @@ private fun WhatsAppChatBubbleItem(
                     bottomStart = if (isUser) 14.dp else 2.dp,
                     bottomEnd = if (isUser) 2.dp else 14.dp
                 ),
-                color = if (isUser) WhatsAppGreenPrimary
+                color = if (isUser) MaterialTheme.colorScheme.primary
                 else MaterialTheme.colorScheme.surfaceVariant,
                 modifier = Modifier.widthIn(max = 300.dp)
             ) {
@@ -300,14 +298,14 @@ private fun WhatsAppChatBubbleItem(
                     text = message.text,
                     style = MaterialTheme.typography.bodyMedium,
                     fontSize = 13.5.sp,
-                    color = if (isUser) Color.White
+                    color = if (isUser) MaterialTheme.colorScheme.onPrimary
                     else MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
                 )
             }
         }
 
-        // Proposed Routine Action Card (Solid WhatsApp green buttons, not chunky)
+        // Proposed Routine Action Card
         val proposed = message.proposedAction
         if (!isUser && proposed != null) {
             Spacer(modifier = Modifier.height(6.dp))
@@ -329,22 +327,18 @@ private fun WhatsAppChatBubbleItem(
                         .fillMaxWidth()
                         .padding(12.dp)
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
+                    Surface(
+                        shape = RoundedCornerShape(6.dp),
+                        color = MaterialTheme.colorScheme.primaryContainer
                     ) {
-                        Surface(
-                            shape = RoundedCornerShape(6.dp),
-                            color = MaterialTheme.colorScheme.primaryContainer
-                        ) {
-                            Text(
-                                text = "✨ Open Slot Found",
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                                fontSize = 10.sp
-                            )
-                        }
+                        Text(
+                            text = "✨ Open Slot Found",
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                            fontSize = 10.sp
+                        )
                     }
 
                     Spacer(modifier = Modifier.height(6.dp))
@@ -366,14 +360,14 @@ private fun WhatsAppChatBubbleItem(
                             imageVector = Icons.Default.Schedule,
                             contentDescription = null,
                             modifier = Modifier.size(13.dp),
-                            tint = WhatsAppGreenPrimary
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             text = "${proposed.date}  •  ${proposed.time}",
                             style = MaterialTheme.typography.bodySmall,
                             fontWeight = FontWeight.SemiBold,
-                            color = WhatsAppGreenPrimary,
+                            color = MaterialTheme.colorScheme.onSurface,
                             fontSize = 12.sp
                         )
                     }
@@ -389,7 +383,7 @@ private fun WhatsAppChatBubbleItem(
                                 onClick = {
                                     onQuickChange("Can we move this to a different time?")
                                 },
-                                shape = RoundedCornerShape(8.dp),
+                                shape = RoundedCornerShape(10.dp),
                                 modifier = Modifier
                                     .weight(1f)
                                     .height(36.dp)
@@ -397,19 +391,19 @@ private fun WhatsAppChatBubbleItem(
                                 Icon(
                                     imageVector = Icons.Default.EditCalendar,
                                     contentDescription = null,
-                                    tint = WhatsAppGreenPrimary,
+                                    tint = MaterialTheme.colorScheme.onSurface,
                                     modifier = Modifier.size(14.dp)
                                 )
                                 Spacer(modifier = Modifier.width(3.dp))
-                                Text("Change Time", fontSize = 11.sp)
+                                Text("Change Time", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurface)
                             }
 
                             Button(
                                 onClick = { onConfirmAction(proposed) },
-                                shape = RoundedCornerShape(8.dp),
+                                shape = RoundedCornerShape(10.dp),
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = WhatsAppGreenPrimary,
-                                    contentColor = Color.White
+                                    containerColor = MaterialTheme.colorScheme.primary,
+                                    contentColor = MaterialTheme.colorScheme.onPrimary
                                 ),
                                 elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp),
                                 modifier = Modifier
@@ -420,7 +414,7 @@ private fun WhatsAppChatBubbleItem(
                                 Icon(
                                     imageVector = Icons.Default.CheckCircle,
                                     contentDescription = null,
-                                    tint = Color.White,
+                                    tint = MaterialTheme.colorScheme.onPrimary,
                                     modifier = Modifier.size(14.dp)
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
@@ -428,7 +422,7 @@ private fun WhatsAppChatBubbleItem(
                                     text = "Confirm & Add",
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = Color.White
+                                    color = MaterialTheme.colorScheme.onPrimary
                                 )
                             }
                         }
@@ -445,7 +439,7 @@ private fun WhatsAppChatBubbleItem(
                                 Icon(
                                     imageVector = Icons.Default.CheckCircle,
                                     contentDescription = null,
-                                    tint = WhatsAppGreenPrimary,
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
                                     modifier = Modifier.size(15.dp)
                                 )
                                 Spacer(modifier = Modifier.width(6.dp))

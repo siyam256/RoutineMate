@@ -1,8 +1,7 @@
 package com.example.ui.components
 
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -32,14 +31,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.model.RoutineTask
-import com.example.ui.theme.WhatsAppGreenPrimary
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -63,18 +60,18 @@ fun CompactDateStrip(
     val daysList = remember(todayDateStr) {
         val list = mutableListOf<CalendarDayItem>()
         val cal = Calendar.getInstance()
-        cal.add(Calendar.DAY_OF_YEAR, -3) // 3 days in past
+        cal.add(Calendar.DAY_OF_YEAR, -4)
 
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
         val dayOfWeekFormat = SimpleDateFormat("EEE", Locale.US)
         val dayNumFormat = SimpleDateFormat("d", Locale.US)
 
-        for (i in 0..20) {
+        for (i in 0..24) {
             val dateStr = dateFormat.format(cal.time)
             list.add(
                 CalendarDayItem(
                     dateStr = dateStr,
-                    dayOfWeek = dayOfWeekFormat.format(cal.time),
+                    dayOfWeek = dayOfWeekFormat.format(cal.time).uppercase(),
                     dayNumber = dayNumFormat.format(cal.time),
                     isToday = dateStr == todayDateStr
                 )
@@ -84,169 +81,114 @@ fun CompactDateStrip(
         list
     }
 
-    val taskDateCounts = remember(allTasks) {
-        allTasks.groupBy { it.date }.mapValues { it.value.size }
+    val tasksByDate = remember(allTasks) {
+        allTasks.groupBy { it.date }
     }
 
     val listState = rememberLazyListState()
 
     LaunchedEffect(selectedDate) {
         val index = daysList.indexOfFirst { it.dateStr == selectedDate }
-        if (index != -1) {
-            listState.animateScrollToItem(maxOf(0, index - 2))
+        if (index >= 0) {
+            val scrollTarget = (index - 2).coerceAtLeast(0)
+            listState.animateScrollToItem(scrollTarget)
         }
     }
 
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 2.dp)
+    Surface(
+        color = MaterialTheme.colorScheme.background,
+        modifier = modifier.fillMaxWidth()
     ) {
-        // Month & Quick Today Bar
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 4.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            val displayMonth = remember(selectedDate) {
-                try {
-                    val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.US)
-                    val parsed = sdf.parse(selectedDate) ?: Date()
-                    val outSdf = SimpleDateFormat("MMMM yyyy", Locale.US)
-                    outSdf.format(parsed)
-                } catch (_: Exception) {
-                    selectedDate
-                }
-            }
-
-            Text(
-                text = displayMonth,
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface,
-                fontSize = 15.sp
-            )
-
-            if (selectedDate != todayDateStr) {
-                Surface(
-                    onClick = { onSelectDate(todayDateStr) },
-                    shape = RoundedCornerShape(8.dp),
-                    color = MaterialTheme.colorScheme.primaryContainer,
-                    modifier = Modifier.testTag("jump_to_today_button")
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(5.dp)
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.primary)
-                        )
-                        Spacer(modifier = Modifier.width(5.dp))
-                        Text(
-                            text = "Today",
-                            style = MaterialTheme.typography.labelSmall,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(2.dp))
-
-        // Horizontal Compact Day Pills with Solid WhatsApp Green
         LazyRow(
             state = listState,
-            contentPadding = PaddingValues(horizontal = 14.dp),
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
             items(daysList, key = { it.dateStr }) { item ->
                 val isSelected = item.dateStr == selectedDate
-                val taskCount = taskDateCounts[item.dateStr] ?: 0
+                val dayTasks = tasksByDate[item.dateStr] ?: emptyList()
+                val totalCount = dayTasks.size
+                val completedCount = dayTasks.count { it.isCompleted }
 
-                val itemScale by animateFloatAsState(
-                    targetValue = if (isSelected) 1.02f else 1f,
-                    animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioMediumBouncy,
-                        stiffness = Spring.StiffnessLow
-                    ),
-                    label = "itemScale"
+                val containerColor by animateColorAsState(
+                    targetValue = if (isSelected) MaterialTheme.colorScheme.primary
+                    else MaterialTheme.colorScheme.surface,
+                    animationSpec = tween(180),
+                    label = "dateContainer"
                 )
 
-                val textColor = when {
-                    isSelected -> Color.White
-                    item.isToday -> MaterialTheme.colorScheme.primary
-                    else -> MaterialTheme.colorScheme.onSurfaceVariant
-                }
+                val contentColor by animateColorAsState(
+                    targetValue = if (isSelected) MaterialTheme.colorScheme.onPrimary
+                    else MaterialTheme.colorScheme.onSurface,
+                    animationSpec = tween(180),
+                    label = "dateContent"
+                )
 
+                val borderColor = if (isSelected) MaterialTheme.colorScheme.primary
+                else if (item.isToday) MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                else MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
+
+                // Sleek Minimalist Capsule (Black & White style)
                 Box(
                     modifier = Modifier
-                        .scale(itemScale)
-                        .width(46.dp)
-                        .height(60.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .then(
-                            if (isSelected) {
-                                Modifier.background(WhatsAppGreenPrimary)
-                            } else {
-                                Modifier
-                                    .background(MaterialTheme.colorScheme.surface)
-                                    .border(
-                                        width = 1.dp,
-                                        color = if (item.isToday) MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)
-                                        else MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
-                                        shape = RoundedCornerShape(12.dp)
-                                    )
-                            }
+                        .width(52.dp)
+                        .height(72.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(containerColor)
+                        .border(
+                            width = if (isSelected || item.isToday) 1.5.dp else 1.dp,
+                            color = borderColor,
+                            shape = RoundedCornerShape(16.dp)
                         )
                         .clickable { onSelectDate(item.dateStr) }
-                        .padding(vertical = 6.dp),
+                        .testTag("date_chip_${item.dateStr}"),
                     contentAlignment = Alignment.Center
                 ) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier.padding(vertical = 8.dp)
                     ) {
                         Text(
-                            text = if (item.isToday) "TODAY" else item.dayOfWeek.uppercase(),
-                            fontSize = 8.5.sp,
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = 0.3.sp,
-                            color = if (isSelected) Color.White.copy(alpha = 0.85f) else textColor
+                            text = item.dayOfWeek.take(3),
+                            style = MaterialTheme.typography.labelSmall,
+                            fontSize = 11.sp,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                            color = if (isSelected) contentColor
+                            else MaterialTheme.colorScheme.onSurfaceVariant
                         )
 
-                        Spacer(modifier = Modifier.height(2.dp))
+                        Spacer(modifier = Modifier.height(4.dp))
 
                         Text(
                             text = item.dayNumber,
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = textColor
+                            style = MaterialTheme.typography.titleMedium,
+                            fontSize = 17.sp,
+                            fontWeight = if (isSelected) FontWeight.ExtraBold else FontWeight.SemiBold,
+                            color = contentColor
                         )
 
-                        Spacer(modifier = Modifier.height(3.dp))
+                        Spacer(modifier = Modifier.height(4.dp))
 
-                        // Task indicator dot
-                        if (taskCount > 0) {
+                        // Task status dot
+                        if (totalCount > 0) {
                             Box(
                                 modifier = Modifier
-                                    .width(if (taskCount > 1) 10.dp else 4.dp)
-                                    .height(3.dp)
-                                    .clip(RoundedCornerShape(1.5.dp))
+                                    .size(5.dp)
+                                    .clip(CircleShape)
                                     .background(
-                                        if (isSelected) Color.White
-                                        else MaterialTheme.colorScheme.primary
+                                        if (isSelected) {
+                                            if (completedCount == totalCount) contentColor
+                                            else contentColor.copy(alpha = 0.6f)
+                                        } else {
+                                            if (completedCount == totalCount) MaterialTheme.colorScheme.onSurface
+                                            else MaterialTheme.colorScheme.onSurfaceVariant
+                                        }
                                     )
                             )
                         } else {
-                            Spacer(modifier = Modifier.height(3.dp))
+                            Spacer(modifier = Modifier.size(5.dp))
                         }
                     }
                 }

@@ -9,52 +9,58 @@ import androidx.compose.ui.graphics.Color
 import com.example.data.preferences.ThemeMode
 
 // ==========================================
-// WHATSAPP SOLID GREEN THEME
-// Clean, Solid, High-Performance, Compact
+// BLACK & WHITE MINIMALIST THEME
+// Pure Monochrome. Zero Gradients. Ultra Clean.
 // ==========================================
 
 private val DarkColorScheme = darkColorScheme(
-    primary = WhatsAppGreenPrimary,
-    onPrimary = Color(0xFF111B21),
-    primaryContainer = WhatsAppGreenContainerDark,
-    onPrimaryContainer = WhatsAppGreenLight,
-    secondary = WhatsAppGreenBright,
-    onSecondary = Color(0xFF0B141A),
-    secondaryContainer = Color(0xFF1F2C34),
-    onSecondaryContainer = WhatsAppGreenBright,
-    tertiary = WhatsAppGreenPrimary,
-    onTertiary = Color.White,
-    background = WhatsAppDarkBackground,
-    onBackground = WhatsAppDarkTextPrimary,
-    surface = WhatsAppDarkSurface,
-    onSurface = WhatsAppDarkTextPrimary,
-    surfaceVariant = WhatsAppDarkCard,
-    onSurfaceVariant = WhatsAppDarkTextSecondary,
-    outline = WhatsAppDarkBorder,
-    error = WhatsAppRed,
-    onError = Color.White
+    primary = MonoWhite,
+    onPrimary = MonoBlack,
+    primaryContainer = MonoDarkCardElevated,
+    onPrimaryContainer = MonoWhite,
+    secondary = MonoDarkTextSecondary,
+    onSecondary = MonoBlack,
+    secondaryContainer = MonoDarkCard,
+    onSecondaryContainer = MonoWhite,
+    tertiary = MonoWhite,
+    onTertiary = MonoBlack,
+    background = MonoDarkBackground,
+    onBackground = MonoDarkTextPrimary,
+    surface = MonoDarkSurface,
+    onSurface = MonoDarkTextPrimary,
+    surfaceVariant = MonoDarkCard,
+    onSurfaceVariant = MonoDarkTextSecondary,
+    outline = MonoDarkBorder,
+    outlineVariant = MonoDarkBorderLight,
+    error = MonoWhite,
+    onError = MonoBlack,
+    errorContainer = MonoDarkCardElevated,
+    onErrorContainer = MonoWhite
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = WhatsAppGreenDark,
-    onPrimary = Color.White,
-    primaryContainer = WhatsAppGreenLight,
-    onPrimaryContainer = WhatsAppGreenDeep,
-    secondary = WhatsAppGreenPrimary,
-    onSecondary = Color.White,
-    secondaryContainer = Color(0xFFE7FCE9),
-    onSecondaryContainer = WhatsAppGreenDark,
-    tertiary = WhatsAppGreenPrimary,
-    onTertiary = Color.White,
-    background = WhatsAppLightBackground,
-    onBackground = WhatsAppLightTextPrimary,
-    surface = WhatsAppLightSurface,
-    onSurface = WhatsAppLightTextPrimary,
-    surfaceVariant = WhatsAppLightCard,
-    onSurfaceVariant = WhatsAppLightTextSecondary,
-    outline = WhatsAppLightBorder,
-    error = WhatsAppRed,
-    onError = Color.White
+    primary = MonoBlack,
+    onPrimary = MonoWhite,
+    primaryContainer = MonoLightCardElevated,
+    onPrimaryContainer = MonoBlack,
+    secondary = MonoLightTextSecondary,
+    onSecondary = MonoWhite,
+    secondaryContainer = MonoLightSurface,
+    onSecondaryContainer = MonoBlack,
+    tertiary = MonoBlack,
+    onTertiary = MonoWhite,
+    background = MonoLightBackground,
+    onBackground = MonoLightTextPrimary,
+    surface = MonoLightSurface,
+    onSurface = MonoLightTextPrimary,
+    surfaceVariant = MonoLightCard,
+    onSurfaceVariant = MonoLightTextSecondary,
+    outline = MonoLightBorder,
+    outlineVariant = MonoLightBorderDark,
+    error = MonoBlack,
+    onError = MonoWhite,
+    errorContainer = MonoLightCardElevated,
+    onErrorContainer = MonoBlack
 )
 
 @Composable

@@ -46,7 +46,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -55,8 +54,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.data.model.RoutineTask
-import com.example.ui.theme.WhatsAppGreenPrimary
-import com.example.ui.theme.WhatsAppRed
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -77,7 +74,7 @@ fun TaskDueActionDialog(
     val infiniteTransition = rememberInfiniteTransition(label = "alarmPulse")
     val bellScale by infiniteTransition.animateFloat(
         initialValue = 1f,
-        targetValue = 1.08f,
+        targetValue = 1.06f,
         animationSpec = infiniteRepeatable(
             animation = tween(600, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
@@ -95,11 +92,11 @@ fun TaskDueActionDialog(
         Card(
             shape = RoundedCornerShape(18.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(4.dp)
-                .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f), RoundedCornerShape(18.dp))
+                .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.6f), RoundedCornerShape(18.dp))
                 .testTag("task_due_action_dialog")
         ) {
             Column(
@@ -108,20 +105,20 @@ fun TaskDueActionDialog(
                     .padding(20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Solid Alert Badge
+                // Monochrome High Contrast Alert Icon
                 Box(
                     modifier = Modifier
-                        .size(52.dp)
+                        .size(48.dp)
                         .scale(bellScale)
                         .clip(CircleShape)
-                        .background(WhatsAppRed),
+                        .background(MaterialTheme.colorScheme.primary),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Default.Alarm,
                         contentDescription = "Routine Alarm",
-                        tint = Color.White,
-                        modifier = Modifier.size(26.dp)
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.size(24.dp)
                     )
                 }
 
@@ -129,13 +126,13 @@ fun TaskDueActionDialog(
 
                 Surface(
                     shape = RoundedCornerShape(6.dp),
-                    color = MaterialTheme.colorScheme.error.copy(alpha = 0.12f)
+                    color = MaterialTheme.colorScheme.surfaceVariant
                 ) {
                     Text(
                         text = "ROUTINE DUE NOW",
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.error,
+                        color = MaterialTheme.colorScheme.onSurface,
                         letterSpacing = 1.sp,
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
                         fontSize = 11.sp
@@ -150,7 +147,7 @@ fun TaskDueActionDialog(
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Center,
-                    fontSize = 18.sp
+                    fontSize = 17.sp
                 )
 
                 Spacer(modifier = Modifier.height(6.dp))
@@ -167,7 +164,7 @@ fun TaskDueActionDialog(
                             imageVector = Icons.Default.Schedule,
                             contentDescription = null,
                             modifier = Modifier.size(13.dp),
-                            tint = WhatsAppGreenPrimary
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
@@ -193,194 +190,177 @@ fun TaskDueActionDialog(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 if (!showSnoozeOptions) {
-                    // Action 1: Mark Completed with Solid WhatsApp Green (Compact button)
+                    // Action 1: Mark Completed with Solid Monochrome Primary
                     Button(
                         onClick = onMarkDone,
-                        shape = RoundedCornerShape(10.dp),
+                        shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = WhatsAppGreenPrimary,
-                            contentColor = Color.White
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
                         ),
                         elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(42.dp)
+                            .height(40.dp)
                             .testTag("action_done_button")
                     ) {
                         Icon(
                             imageVector = Icons.Default.CheckCircle,
                             contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.size(18.dp)
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = "Mark as Completed",
-                            fontSize = 14.sp,
+                            fontSize = 13.sp,
                             fontWeight = FontWeight.SemiBold
                         )
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // Action 2: Reschedule / Later (Compact outlined button)
+                    // Action 2: Reschedule / Later
                     OutlinedButton(
                         onClick = { showSnoozeOptions = true },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(40.dp)
+                            .height(38.dp)
                             .testTag("action_snooze_button"),
-                        shape = RoundedCornerShape(10.dp)
+                        shape = RoundedCornerShape(12.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Snooze,
                             contentDescription = null,
-                            tint = WhatsAppGreenPrimary,
-                            modifier = Modifier.size(18.dp)
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = "Reschedule / Later",
+                            text = "Reschedule Routine",
                             fontSize = 13.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontWeight = FontWeight.Medium
                         )
                     }
                 } else {
-                    // Reschedule selection
+                    // Reschedule Quick Options
                     Text(
-                        text = "Choose when to remind you:",
+                        text = "Choose a reschedule delay:",
                         style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = 13.sp
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    val quickSnoozeOptions = listOf(
+                        "+10 Minutes" to 10,
+                        "+30 Minutes" to 30,
+                        "+1 Hour" to 60,
+                        "+2 Hours" to 120,
+                        "Tomorrow Same Time" to -1
+                    )
 
                     FlowRow(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(6.dp),
                         verticalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        WhatsAppSnoozeChip(label = "+15m") {
-                            val (d, t) = calculateQuickOffset(15)
-                            onReschedule(d, t)
+                        quickSnoozeOptions.forEach { (label, minutesToAdd) ->
+                            Surface(
+                                shape = RoundedCornerShape(8.dp),
+                                color = MaterialTheme.colorScheme.surfaceVariant,
+                                modifier = Modifier
+                                    .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.4f), RoundedCornerShape(8.dp)),
+                                onClick = {
+                                    val cal = Calendar.getInstance()
+                                    val timeFormat = SimpleDateFormat("HH:mm", Locale.US)
+                                    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+
+                                    if (minutesToAdd == -1) {
+                                        cal.add(Calendar.DAY_OF_YEAR, 1)
+                                        val newDate = dateFormat.format(cal.time)
+                                        onReschedule(newDate, task.time)
+                                    } else {
+                                        cal.add(Calendar.MINUTE, minutesToAdd)
+                                        val newTime = timeFormat.format(cal.time)
+                                        val newDate = dateFormat.format(cal.time)
+                                        onReschedule(newDate, newTime)
+                                    }
+                                }
+                            ) {
+                                Text(
+                                    text = label,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp)
+                                )
+                            }
                         }
-                        WhatsAppSnoozeChip(label = "+30m") {
-                            val (d, t) = calculateQuickOffset(30)
-                            onReschedule(d, t)
-                        }
-                        WhatsAppSnoozeChip(label = "+1h") {
-                            val (d, t) = calculateQuickOffset(60)
-                            onReschedule(d, t)
-                        }
-                        WhatsAppSnoozeChip(label = "Tonight (8 PM)") {
-                            val (d, _) = calculateQuickOffset(0)
-                            onReschedule(d, "20:00")
-                        }
-                        WhatsAppSnoozeChip(label = "Tomorrow (9 AM)") {
-                            val cal = Calendar.getInstance()
-                            cal.add(Calendar.DAY_OF_YEAR, 1)
-                            val d = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(cal.time)
-                            onReschedule(d, "09:00")
-                        }
-                        WhatsAppSnoozeChip(label = "Custom...") {
-                            showCustomInput = !showCustomInput
-                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    OutlinedButton(
+                        onClick = { showCustomInput = !showCustomInput },
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier.fillMaxWidth().height(36.dp)
+                    ) {
+                        Text(
+                            text = if (showCustomInput) "Hide Custom Time" else "Custom Date & Time",
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
                     }
 
                     if (showCustomInput) {
-                        Spacer(modifier = Modifier.height(10.dp))
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            OutlinedTextField(
-                                value = customDateInput,
-                                onValueChange = { customDateInput = it },
-                                label = { Text("Date (YYYY-MM-DD)", fontSize = 11.sp) },
-                                singleLine = true,
-                                shape = RoundedCornerShape(8.dp),
-                                modifier = Modifier.weight(1.3f)
-                            )
-                            OutlinedTextField(
-                                value = customTimeInput,
-                                onValueChange = { customTimeInput = it },
-                                label = { Text("Time (HH:mm)", fontSize = 11.sp) },
-                                singleLine = true,
-                                shape = RoundedCornerShape(8.dp),
-                                modifier = Modifier.weight(1f)
-                            )
-                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        OutlinedTextField(
+                            value = customDateInput,
+                            onValueChange = { customDateInput = it },
+                            label = { Text("Date (YYYY-MM-DD)", fontSize = 11.sp) },
+                            singleLine = true,
+                            shape = RoundedCornerShape(8.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Spacer(modifier = Modifier.height(6.dp))
+                        OutlinedTextField(
+                            value = customTimeInput,
+                            onValueChange = { customTimeInput = it },
+                            label = { Text("Time (HH:mm)", fontSize = 11.sp) },
+                            singleLine = true,
+                            shape = RoundedCornerShape(8.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        )
                         Spacer(modifier = Modifier.height(8.dp))
                         Button(
                             onClick = {
-                                if (customDateInput.isNotBlank() && customTimeInput.isNotBlank()) {
-                                    onReschedule(customDateInput.trim(), customTimeInput.trim())
-                                }
+                                onReschedule(customDateInput.trim(), customTimeInput.trim())
                             },
-                            shape = RoundedCornerShape(10.dp),
+                            shape = RoundedCornerShape(8.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = WhatsAppGreenPrimary,
-                                contentColor = Color.White
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = MaterialTheme.colorScheme.onPrimary
                             ),
-                            elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(40.dp)
+                            modifier = Modifier.fillMaxWidth().height(36.dp)
                         ) {
-                            Text(
-                                text = "Confirm New Time",
-                                color = Color.White,
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 13.sp
-                            )
+                            Text("Save Custom Time", fontSize = 12.sp, fontWeight = FontWeight.Bold)
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     OutlinedButton(
                         onClick = { showSnoozeOptions = false },
-                        shape = RoundedCornerShape(10.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(38.dp)
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier.fillMaxWidth().height(36.dp)
                     ) {
-                        Text("Back", fontSize = 13.sp)
+                        Text("Back to Alert", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface)
                     }
                 }
             }
         }
     }
-}
-
-@Composable
-private fun WhatsAppSnoozeChip(
-    label: String,
-    onClick: () -> Unit
-) {
-    Surface(
-        onClick = onClick,
-        shape = RoundedCornerShape(8.dp),
-        color = MaterialTheme.colorScheme.primaryContainer,
-        modifier = Modifier.testTag("snooze_chip_$label")
-    ) {
-        Text(
-            text = label,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
-        )
-    }
-}
-
-private fun calculateQuickOffset(minutes: Int): Pair<String, String> {
-    val cal = Calendar.getInstance()
-    cal.add(Calendar.MINUTE, minutes)
-    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
-    val timeFormat = SimpleDateFormat("HH:mm", Locale.US)
-    return Pair(dateFormat.format(cal.time), timeFormat.format(cal.time))
 }

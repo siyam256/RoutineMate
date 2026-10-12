@@ -123,6 +123,7 @@ class RoutineViewModel(application: Application) : AndroidViewModel(application)
         title: String,
         date: String,
         time: String,
+        description: String = "",
         durationMinutes: Int = 30,
         category: String = "general",
         priority: String = "medium"
@@ -130,6 +131,7 @@ class RoutineViewModel(application: Application) : AndroidViewModel(application)
         viewModelScope.launch {
             val newTask = RoutineTask(
                 title = title.trim(),
+                description = description.trim(),
                 date = date,
                 time = time,
                 durationMinutes = durationMinutes,

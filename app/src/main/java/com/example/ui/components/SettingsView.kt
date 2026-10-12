@@ -45,7 +45,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -54,7 +53,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.preferences.ThemeMode
-import com.example.ui.theme.WhatsAppGreenPrimary
 
 @Composable
 fun SettingsView(
@@ -73,11 +71,11 @@ fun SettingsView(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(14.dp)
+            .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
         Text(
-            text = "Settings & Configuration",
+            text = "Settings",
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             fontSize = 18.sp,
@@ -88,12 +86,12 @@ fun SettingsView(
 
         // Gemini API Key card
         Card(
-            shape = RoundedCornerShape(14.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f), RoundedCornerShape(14.dp))
+                .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f), RoundedCornerShape(16.dp))
         ) {
             Column(
                 modifier = Modifier
@@ -104,8 +102,8 @@ fun SettingsView(
                     Icon(
                         imageVector = Icons.Default.Key,
                         contentDescription = null,
-                        tint = WhatsAppGreenPrimary,
-                        modifier = Modifier.size(20.dp)
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
@@ -119,7 +117,7 @@ fun SettingsView(
                 Spacer(modifier = Modifier.height(6.dp))
 
                 Text(
-                    text = "Provide your Gemini API key to enable AI-powered natural language routine planning and free-slot detection.",
+                    text = "Provide your Gemini API key to enable AI-powered natural language routine planning.",
                     style = MaterialTheme.typography.bodySmall,
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -165,37 +163,36 @@ fun SettingsView(
                         Icon(
                             imageVector = if (hasActiveKey) Icons.Default.CheckCircle else Icons.Default.Warning,
                             contentDescription = null,
-                            tint = if (hasActiveKey) WhatsAppGreenPrimary else MaterialTheme.colorScheme.error,
+                            tint = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.size(15.dp)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = if (hasActiveKey) "API Key Active" else "API Key Required",
+                            text = if (hasActiveKey) "Key Active" else "Key Required",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = if (hasActiveKey) WhatsAppGreenPrimary else MaterialTheme.colorScheme.error
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
 
-                    // Compact, solid WhatsApp green Save button
+                    // Compact, solid monochrome Save button
                     Button(
                         onClick = {
                             onSaveApiKey(apiKeyInput.trim())
                             isSavedNoticeVisible = true
                         },
-                        shape = RoundedCornerShape(8.dp),
+                        shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = WhatsAppGreenPrimary,
-                            contentColor = Color.White
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
                         ),
                         elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp),
                         modifier = Modifier
-                            .height(36.dp)
+                            .height(34.dp)
                             .testTag("save_api_key_button")
                     ) {
                         Text(
                             text = "Save Key",
-                            color = Color.White,
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 12.sp
                         )
@@ -207,7 +204,7 @@ fun SettingsView(
                     Text(
                         text = "✓ API Key saved successfully!",
                         fontSize = 11.sp,
-                        color = WhatsAppGreenPrimary,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -218,12 +215,12 @@ fun SettingsView(
 
         // Theme Mode card
         Card(
-            shape = RoundedCornerShape(14.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f), RoundedCornerShape(14.dp))
+                .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f), RoundedCornerShape(16.dp))
         ) {
             Column(
                 modifier = Modifier
@@ -234,17 +231,26 @@ fun SettingsView(
                     Icon(
                         imageVector = Icons.Default.SettingsBrightness,
                         contentDescription = null,
-                        tint = WhatsAppGreenPrimary,
-                        modifier = Modifier.size(20.dp)
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Appearance Theme",
+                        text = "App Appearance",
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                 }
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Text(
+                    text = "Switch between Dark, Light, or System default theme.",
+                    style = MaterialTheme.typography.bodySmall,
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
 
                 Spacer(modifier = Modifier.height(10.dp))
 
@@ -252,40 +258,40 @@ fun SettingsView(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    ThemeMode.values().forEach { mode ->
+                    listOf(
+                        Triple(ThemeMode.SYSTEM, "System", Icons.Default.SettingsBrightness),
+                        Triple(ThemeMode.DARK, "Dark", Icons.Default.DarkMode),
+                        Triple(ThemeMode.LIGHT, "Light", Icons.Default.LightMode)
+                    ).forEach { (mode, label, icon) ->
                         val isSelected = themeMode == mode
                         FilterChip(
                             selected = isSelected,
                             onClick = { onSelectThemeMode(mode) },
-                            label = {
-                                Text(
-                                    text = when (mode) {
-                                        ThemeMode.SYSTEM -> "System"
-                                        ThemeMode.LIGHT -> "Light"
-                                        ThemeMode.DARK -> "Dark"
-                                    },
-                                    fontSize = 12.sp,
-                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
-                                )
-                            },
+                            label = { Text(label, fontSize = 12.sp, fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal) },
                             leadingIcon = {
-                                Icon(
-                                    imageVector = when (mode) {
-                                        ThemeMode.SYSTEM -> Icons.Default.SettingsBrightness
-                                        ThemeMode.LIGHT -> Icons.Default.LightMode
-                                        ThemeMode.DARK -> Icons.Default.DarkMode
-                                    },
-                                    contentDescription = null,
-                                    modifier = Modifier.size(15.dp),
-                                    tint = if (isSelected) WhatsAppGreenPrimary else MaterialTheme.colorScheme.onSurfaceVariant
-                                )
+                                Icon(imageVector = icon, contentDescription = null, modifier = Modifier.size(14.dp))
                             },
-                            shape = RoundedCornerShape(8.dp),
+                            shape = RoundedCornerShape(10.dp),
                             colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                                selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                selectedContainerColor = MaterialTheme.colorScheme.primary,
+                                selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                                selectedLeadingIconColor = MaterialTheme.colorScheme.onPrimary,
+                                containerColor = MaterialTheme.colorScheme.surface,
+                                labelColor = MaterialTheme.colorScheme.onSurface,
+                                iconColor = MaterialTheme.colorScheme.onSurfaceVariant
                             ),
-                            modifier = Modifier.weight(1f)
+                            border = FilterChipDefaults.filterChipBorder(
+                                enabled = true,
+                                selected = isSelected,
+                                borderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                                selectedBorderColor = MaterialTheme.colorScheme.primary,
+                                borderWidth = 1.dp,
+                                selectedBorderWidth = 1.dp
+                            ),
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(36.dp)
+                                .testTag("theme_chip_${label.lowercase()}")
                         )
                     }
                 }
@@ -294,14 +300,14 @@ fun SettingsView(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Alarms & Notifications info card
+        // Notifications info card
         Card(
-            shape = RoundedCornerShape(14.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f), RoundedCornerShape(14.dp))
+                .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f), RoundedCornerShape(16.dp))
         ) {
             Column(
                 modifier = Modifier
@@ -312,25 +318,24 @@ fun SettingsView(
                     Icon(
                         imageVector = Icons.Default.Notifications,
                         contentDescription = null,
-                        tint = WhatsAppGreenPrimary,
-                        modifier = Modifier.size(20.dp)
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Alarm & Acknowledgement",
+                        text = "Routine Alarms & Alerts",
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(6.dp))
 
                 Text(
-                    text = "• Alarms trigger exactly at the scheduled time.\n• Notifications are persistent and cannot be swiped away.\n• You must choose 'Mark as Completed' or 'Reschedule / Later'.",
+                    text = "RoutineMate schedules exact alarms with persistent notification alerts and full screen actions when tasks are due.",
                     style = MaterialTheme.typography.bodySmall,
                     fontSize = 12.sp,
-                    lineHeight = 18.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
